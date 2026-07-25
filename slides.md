@@ -206,56 +206,40 @@ We still aim high, but use **vertex labels** to systematically resolve conflicts
 
 ---
 
-# Labels
+# Label Introduction
 
-Each vertex gets a label (call it $h$ or $\ell$):
-
-$$
-h(b_i) = \max_{g_j \in G}\, w(b_i,g_j) \qquad\qquad h(g_j) = 0
-$$
-
-**Key insight** — from Solution v0.0, if every edge in $M$ satisfies $h(b_i)+h(g_j)=w(b_i,g_j)$, then:
+Assign each vertex a **label** (a number):
 
 $$
-w(M) = \sum_{(b_i,g_j)\in M} w(b_i,g_j) = \sum_{i} h(b_i) + \sum_{j} h(g_j)
+w(b_i) = \max_{g_j}\, w(b_i,g_j) \qquad\qquad w(g_j) = 0
 $$
 
-The **total score** of the matching equals the **sum of all labels**. If we can *keep this true* while improving the matching, we win.
+such that for every edge $(b_i,g_j)$:
 
-<div class="graph-center-wrap" style="margin-top:0.4rem">
-  <BipartiteGraph
-    :left-count="3"
-    :right-count="3"
-    :left-labels="['B_1','B_2','B_3']"
-    :left-labels-latex="true"
-    :right-labels="['G_1','G_2','G_3']"
-    :right-labels-latex="true"
-    :left-outer-labels="['5','7','6']"
-    :right-outer-labels="['0','0','0']"
-    :outer-labels-latex="true"
-    :width="280"
-    :height="180"
-    :node-radius="12"
-    :outer-label-offset="10"
-    :edges="[
-      { from: 0, to: 0, weight: 3, dashed: true },
-      { from: 0, to: 1, weight: 5, highlighted: true },
-      { from: 0, to: 2, weight: 1, dashed: true },
-      { from: 1, to: 0, weight: 2, dashed: true },
-      { from: 1, to: 1, weight: 7, highlighted: true },
-      { from: 1, to: 2, weight: 4, dashed: true },
-      { from: 2, to: 0, weight: 6, highlighted: true },
-      { from: 2, to: 1, weight: 2, dashed: true },
-      { from: 2, to: 2, weight: 5, dashed: true },
-    ]"
-  />
-  <div class="graph-caption">
-    <MathText text="$\Sigma h = 5+7+6 = 18$ &ensp;→&ensp; upper bound of $w(M^*)$" />
-  </div>
-</div>
+$$
+w(b_i) + w(g_j) \ge w(b_i,g_j)
+$$
+
+> The label sum $\sum_i w(b_i) + \sum_j w(g_j)$ is an **upper bound** for any matching.
 
 ---
 
+# Equality Subgraph
 
+If every edge in $M$ satisfies $w(b_i) + w(g_j) = w(b_i,g_j)$ (the **equality** condition), then:
 
+$$
+w(M) = \sum_{(b_i,g_j)\in M} w(b_i,g_j) = \sum_i w(b_i) + \sum_j w(g_j)
+$$
 
+so $w(M) \le \sum_i w(b_i) + \sum_j w(g_j) = w(M^*)$ — $M^*$ is a maximum-weight perfect matching.
+
+**Equality subgraph** = edges where $w(b_i) + w(g_j) = w(b_i,g_j)$.
+
+<br>
+
+> **Problem reduced:** find labels that make the equality subgraph contain a perfect matching.
+
+<br>
+
+The **Hungarian Algorithm** iteratively adjusts labels to achieve exactly that.
