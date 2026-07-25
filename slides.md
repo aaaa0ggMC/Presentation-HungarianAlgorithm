@@ -1003,5 +1003,252 @@ If $G_h$ still has no perfect matching, just repeat the process — each iterati
 The process always terminates — each <MathText text="$\delta$" /> adds an edge, and there are only finitely many edges.
 </div>
 
+---
+
+# Hungarian Algorithm
+
+Putting it all together — the algorithm is surprisingly compact:
+
+<div class="flex gap-6 items-start mt-4">
+<div class="flex-1" style="background:rgba(255,252,245,0.7);border:1px solid var(--c-border);border-radius:10px;padding:0.8rem 1rem;font-size:0.95rem;line-height:1.8">
+
+```text
+for each boy b:
+  h(b) = max weight from b
+for each girl g:
+  h(g) = 0
+
+repeat
+  G_h = { edges where h(b)+h(g)=w(b,g) }
+  M = greedy matching in G_h
+  F = alternating tree from unmatched vertices
+
+  if F reaches a free girl:
+    augment M along the path
+  else if F reaches no free girl:
+    δ = min{ h(b)+h(g)-w(b,g) | b∈F_L, g∉F_R }
+    for b in F_L:  h(b) -= δ
+    for g in F_R:  h(g) += δ
+    // new edges enter G_h → try again
+
+until M is a perfect matching
+return M
+```
+
+</div>
+<div class="flex-1 text-lg leading-relaxed p-4" style="border-left:3px solid var(--c-accent,#b45309);background:var(--c-bg-soft,#f1ead9);border-radius:0 8px 8px 0">
+
+The algorithm is **guaranteed to find the optimal matching** in polynomial time — each iteration either grows the matching or adds a new edge, and it never backtracks.
+
+</div>
+</div>
+
+---
+
+<script setup>
+import { ref, nextTick, onMounted } from 'vue'
+
+const n = ref(4)
+const curStep = ref(0)
+const tryGraph = ref(null)
+const steps = ref([])
+
+function genWeights(size) {
+  const w = []
+  for (let i = 0; i < size; i++) {
+    w[i] = []
+    for (let j = 0; j < size; j++) w[i][j] = Math.floor(Math.random() * 9) + 1
+  }
+  return w
+}
+
+function greedyMatch(ghEdges, size) {
+  const mL = Array(size).fill(-1), mR = Array(size).fill(-1)
+  for (let i = 0; i < size; i++)
+    for (const e of ghEdges)
+      if (e.from === i && mR[e.to] === -1) { mL[i] = e.to; mR[e.to] = i; break }
+  return { matchL: mL, matchR: mR }
+}
+
+function findAugPath(ghEdges, matchL, matchR, root, size) {
+  const visL = new Set([root]), visR = new Set()
+  const parL = {}, parR = {}
+  const queue = [root]
+  while (queue.length) {
+    const cur = queue.shift()
+    for (const e of ghEdges) {
+      if (e.from !== cur || visR.has(e.to)) continue
+      visR.add(e.to)
+      parR[e.to] = cur
+      if (matchR[e.to] === -1) {
+        // free girl — trace back
+        const path = []
+        let g = e.to, b = cur
+        while (b !== undefined) {
+          path.push({ from: b, to: g })
+          if (parL[b] !== undefined) {
+            g = parL[b]
+            b = parR[g]
+          } else b = undefined
+        }
+        return path.reverse()
+      }
+      const nb = matchR[e.to]
+      if (!visL.has(nb)) { visL.add(nb); parL[nb] = e.to; queue.push(nb) }
+    }
+  }
+  return null
+}
+
+function augment(path, matchL, matchR) {
+  for (const e of path) {
+    if (matchL[e.from] === e.to) { matchL[e.from] = -1; matchR[e.to] = -1 }
+    else { matchL[e.from] = e.to; matchR[e.to] = e.from }
+  }
+}
+
+function computeSteps(w, size) {
+  const s = []
+  const hL = w.map(row => Math.max(...row)), hR = Array(size).fill(0)
+
+  s.push({ leftLabels: [...hL], rightLabels: [...hR],
+    ghEdges: (() => { const all = []; for (let i = 0; i < size; i++) for (let j = 0; j < size; j++) all.push({ from: i, to: j, weight: w[i][j] }); return all })(),
+    matchEdges: [], newEdges: [], treeEdges: [],
+    caption: 'Initialize: boys = max weight, girls = 0' })
+
+  let ghEdges = []
+  for (let i = 0; i < size; i++)
+    for (let j = 0; j < size; j++)
+      if (hL[i] + hR[j] === w[i][j]) ghEdges.push({ from: i, to: j, weight: w[i][j] })
+  s.push({ leftLabels: [...hL], rightLabels: [...hR], ghEdges: ghEdges.map(e => ({ ...e })), matchEdges: [], newEdges: [], treeEdges: [],
+    caption: `Build $G_h$: ${ghEdges.length} equality edges` })
+
+  let { matchL, matchR } = greedyMatch(ghEdges, size)
+  let matchEdges = ghEdges.filter(e => matchL[e.from] === e.to)
+  s.push({ leftLabels: [...hL], rightLabels: [...hR], ghEdges: ghEdges.map(e => ({ ...e })), matchEdges: matchEdges.map(e => ({ ...e })), newEdges: [], treeEdges: [],
+    caption: `Greedy matching: size ${matchEdges.length}/${size}` })
+
+  let iter = 0
+  while (matchEdges.length < size && iter < 30) {
+    iter++
+    const root = matchL.indexOf(-1)
+    // BFS for display tree
+    const visL = new Set([root]), visR = new Set()
+    const queue = [{ v: root, s: 'L' }]
+    const treeE = []
+    let found = false
+    while (queue.length && !found) {
+      const c = queue.shift()
+      if (c.s === 'L') {
+        for (const e of ghEdges) {
+          if (e.from === c.v && !visR.has(e.to)) {
+            visR.add(e.to)
+            treeE.push({ from: e.from, to: e.to, weight: e.weight })
+            if (matchR[e.to] === -1) { found = true; break }
+            queue.push({ v: e.to, s: 'R' })
+          }
+        }
+      } else {
+        const m = matchR[c.v]
+        if (m !== -1 && !visL.has(m)) { visL.add(m); queue.push({ v: m, s: 'L' }) }
+      }
+    }
+
+    const path = findAugPath(ghEdges, matchL, matchR, root, size)
+    if (path) {
+      s.push({ leftLabels: [...hL], rightLabels: [...hR], ghEdges: ghEdges.map(e => ({ ...e })), matchEdges: matchEdges.map(e => ({ ...e })), newEdges: [], treeEdges: treeE,
+        caption: `Search from B_${root + 1}: augmenting path found!` })
+      augment(path, matchL, matchR)
+      matchEdges = ghEdges.filter(e => matchL[e.from] === e.to)
+      s.push({ leftLabels: [...hL], rightLabels: [...hR], ghEdges: ghEdges.map(e => ({ ...e })), matchEdges: matchEdges.map(e => ({ ...e })), newEdges: [], treeEdges: [],
+        caption: `Augmented! Matching size ${matchEdges.length}/${size}` })
+    } else {
+      let delta = Infinity
+      for (const b of [...visL])
+        for (let g = 0; g < size; g++)
+          if (!visR.has(g))
+            delta = Math.min(delta, hL[b] + hR[g] - w[b][g])
+      if (delta === Infinity) break
+      for (const b of [...visL]) hL[b] -= delta
+      for (const g of [...visR]) hR[g] += delta
+
+      const newEdges = []
+      for (let i = 0; i < size; i++)
+        for (let j = 0; j < size; j++)
+          if (hL[i] + hR[j] === w[i][j] && !ghEdges.some(e => e.from === i && e.to === j))
+            newEdges.push({ from: i, to: j, weight: w[i][j] })
+      ghEdges.push(...newEdges)
+
+      s.push({ leftLabels: [...hL], rightLabels: [...hR], ghEdges: ghEdges.map(e => ({ ...e })), matchEdges: matchEdges.map(e => ({ ...e })), newEdges: newEdges.map(e => ({ ...e })), treeEdges: treeE,
+        caption: `δ=${delta} → adjust labels → ${newEdges.length} new edge${newEdges.length > 1 ? 's' : ''}` })
+    }
+  }
+
+  s.push({ leftLabels: [...hL], rightLabels: [...hR], ghEdges: ghEdges.map(e => ({ ...e })), matchEdges: matchEdges.map(e => ({ ...e })), newEdges: [], treeEdges: [],
+    caption: matchEdges.length === size ? 'Perfect matching found!' : `Max matching: size ${matchEdges.length}/${size}` })
+  return s
+}
+
+function applyTryStep(s) {
+  const g = tryGraph.value
+  if (!g || !steps.value[s]) return
+  g.reset()
+  const st = steps.value[s]
+  const size = st.leftLabels.length
+  for (let i = 0; i < size; i++) {
+    g.setOuterLabel('left', i, String(st.leftLabels[i]), true)
+    g.setOuterLabel('right', i, String(st.rightLabels[i]), true)
+  }
+  const ids = {}
+  for (const e of st.ghEdges) ids[`${e.from}-${e.to}`] = g.addEdge({ from: e.from, to: e.to, weight: e.weight })
+  for (const e of st.matchEdges) { const id = ids[`${e.from}-${e.to}`]; if (id !== undefined) g.updateEdge(id, { highlighted: true }) }
+  for (const e of st.newEdges) { const id = ids[`${e.from}-${e.to}`]; if (id !== undefined) g.updateEdge(id, { color: '#2563eb', width: 3 }) }
+  for (const e of st.treeEdges) { const id = ids[`${e.from}-${e.to}`]; if (id !== undefined) g.updateEdge(id, { dashed: true }) }
+}
+
+function regenerate() {
+  steps.value = computeSteps(genWeights(n.value), n.value)
+  curStep.value = 0
+  nextTick(() => applyTryStep(0))
+}
+
+function prevStep() { if (curStep.value > 0) { curStep.value--; nextTick(() => applyTryStep(curStep.value)) } }
+function nextStep() { if (curStep.value < steps.value.length - 1) { curStep.value++; nextTick(() => applyTryStep(curStep.value)) } }
+
+onMounted(() => regenerate())
+</script>
+
+# Let's Try It Out!!!
+
+<div class="flex flex-col items-center">
+  <BipartiteGraph
+    :key="n"
+    ref="tryGraph"
+    :left-count="n"
+    :right-count="n"
+    :left-labels="Array.from({length:n},(_,i)=>`B_${i+1}`)"
+    :left-labels-latex="true"
+    :right-labels="Array.from({length:n},(_,i)=>`G_${i+1}`)"
+    :right-labels-latex="true"
+    :width="380" :height="Math.min(300, 80 + n * 22)" :node-radius="Math.max(4, 14 - n)" :outer-label-offset="6"
+  />
+
+  <div class="demo-caption" style="font-size:1rem">
+    <MathText :text="steps[curStep]?.caption || ''" />
+  </div>
+
+  <div class="flex gap-3 items-center mt-2">
+    <div class="flex items-center gap-2">
+      <span style="font-size:0.8rem;color:var(--c-text-dim)">n = {{ n }}</span>
+      <input type="range" min="3" max="10" v-model.number="n" class="try-slider" @change="regenerate()" />
+    </div>
+    <button class="try-btn try-regen" @click="regenerate">Regenerate</button>
+    <div class="flex gap-1">
+      <button class="try-btn" @click="prevStep" :disabled="curStep <= 0">← Prev</button>
+      <button class="try-btn" @click="nextStep" :disabled="curStep >= steps.length - 1">Next →</button>
+    </div>
+  </div>
+</div>
+
 
 
