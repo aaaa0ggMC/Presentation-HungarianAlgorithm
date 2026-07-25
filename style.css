@@ -1,0 +1,120 @@
+/* ===== 全局浅色主题 ===== */
+:root {
+  /* 纸感米色 + 深棕主色 + 琥珀辅色 */
+  --c-primary: #7c5a2e;
+  --c-primary-soft: #f0e6d2;
+  --c-accent: #b45309;
+  --c-bg: #f7f2e7;
+  --c-bg-soft: #f1ead9;
+  --c-text: #2b241a;
+  --c-text-dim: #7a6f5d;
+  --c-border: #e2d9c3;
+}
+
+/* 全局背景与文字 */
+.slidev-layout {
+  background-color: var(--c-bg);
+  color: var(--c-text);
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(180, 130, 60, 0.06), transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(140, 100, 40, 0.05), transparent 45%);
+}
+
+/* 标题 */
+.slidev-layout h1 {
+  color: var(--c-text);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.slidev-layout h2,
+.slidev-layout h3 {
+  color: var(--c-text);
+}
+
+/* 强调 */
+.slidev-layout strong {
+  color: var(--c-primary);
+  font-weight: 600;
+}
+
+/* 链接 */
+.slidev-layout a {
+  color: var(--c-primary);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--c-primary);
+  transition: opacity 0.2s;
+}
+
+.slidev-layout a:hover {
+  opacity: 0.75;
+}
+
+/* 首页底部小链接(不带下划线) */
+.site-link {
+  color: var(--c-text-dim);
+  opacity: 0.6;
+  font-size: 14px;
+  border-bottom: none;
+}
+
+.site-link:hover {
+  opacity: 1;
+}
+
+/* 代码块:纸感卡片化 */
+.slidev-layout pre {
+  background-color: #fdfaf3 !important;
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(120, 90, 40, 0.08);
+}
+
+.slidev-layout code {
+  color: var(--c-text);
+}
+
+/* 行内代码 */
+.slidev-layout :not(pre) > code {
+  background-color: var(--c-primary-soft);
+  color: var(--c-primary);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+/* 引用块 */
+.slidev-layout blockquote {
+  border-left: 3px solid var(--c-primary);
+  background-color: var(--c-bg-soft);
+  padding: 0.5rem 1rem;
+  border-radius: 0 6px 6px 0;
+  color: var(--c-text-dim);
+}
+
+/* 表格 */
+.slidev-layout table {
+  border-collapse: collapse;
+}
+
+.slidev-layout th {
+  background-color: var(--c-primary-soft);
+  color: var(--c-text);
+  font-weight: 600;
+}
+
+.slidev-layout th,
+.slidev-layout td {
+  border: 1px solid var(--c-border);
+  padding: 0.4rem 0.8rem;
+}
+
+/* 分割线 */
+.slidev-layout hr {
+  border-color: var(--c-border);
+}
+
+/* 页码/页脚 */
+.slidev-page-num {
+  color: var(--c-text-dim);
+}
