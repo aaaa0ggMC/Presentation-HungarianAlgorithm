@@ -224,6 +224,7 @@ layout: default
 <script setup>
 import { ref } from 'vue'
 const showMediatorFormula = ref(false)
+const showNextQuestion = ref(false)
 const bridgeOptimalMath = String.raw`$M^*$`
 const definitionInequalityMath = String.raw`$w(M^*) \ge w(M)$`
 const mediatorInequalityMath = String.raw`$w(M^*) = \text{???} \ge w(M)$`
@@ -232,20 +233,24 @@ const mediatorInequalityMath = String.raw`$w(M^*) = \text{???} \ge w(M)$`
 # How to Verify Optimality?
 
 <div class="bridge-card-stack">
-  <div class="para bridge-large-card bridge-combined-card">
+  <div class="para bridge-large-card">
     <span class="para-num">01</span>
-    <div class="bridge-large-content bridge-combined-content">
-      <div class="bridge-formula-content">
-        <MathText :text="showMediatorFormula ? mediatorInequalityMath : definitionInequalityMath" />
-      </div>
-      <div class="bridge-combined-divider"></div>
-      <div class="bridge-question-content">
-        <div v-if="!showMediatorFormula">How can we quickly verify that our chosen <MathText :text="bridgeOptimalMath" /> satisfies this inequality?</div>
-        <div v-else>Perhaps we can find an <span class="term-star">intermediate quantity</span>?</div>
-      </div>
+    <div class="bridge-large-content bridge-formula-content">
+      <MathText :text="showMediatorFormula ? mediatorInequalityMath : definitionInequalityMath" />
     </div>
     <button class="problem-toggle-btn" @click="showMediatorFormula = !showMediatorFormula">
       {{ showMediatorFormula ? '←' : '→' }}
+    </button>
+  </div>
+
+  <div class="para bridge-large-card">
+    <span class="para-num">02</span>
+    <div class="bridge-large-content bridge-question-content">
+      <div v-if="!showNextQuestion">How can we quickly verify that our chosen <MathText :text="bridgeOptimalMath" /> satisfies this inequality?</div>
+      <div v-else>Perhaps we can find an <span class="term-star">intermediate quantity</span>?</div>
+    </div>
+    <button class="problem-toggle-btn" @click="showNextQuestion = !showNextQuestion">
+      {{ showNextQuestion ? '←' : '→' }}
     </button>
   </div>
 </div>
@@ -311,7 +316,7 @@ const upperBoundMath = String.raw`$\sum_{b_i\in B}h(b_i)+\sum_{g_j\in G}h(g_j)\g
 
   <div v-if="showLabelConclusion" class="labels-result-flow">
     <div class="labels-flow-arrow" aria-hidden="true">↓</div>
-    <div class="labels-conclusion-card"><span class="term-star">Right — this is the intermediate quantity!</span></div>
+    <div class="labels-conclusion-card">This is actually the <span class="term-star">intermediate quantity!</span></div>
   </div>
 </div>
 
