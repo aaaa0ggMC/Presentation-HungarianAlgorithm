@@ -173,9 +173,298 @@
   color: var(--c-text);
 }
 
+/* ===== Problem Formulation symbol notes ===== */
+.formulation-notes {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.formulation-note {
+  min-width: 0;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--c-border);
+  border-radius: 9px;
+  background: rgba(255, 252, 245, 0.72);
+  box-shadow: 0 1px 2px rgba(120, 90, 40, 0.06);
+  font-size: 0.91rem;
+  line-height: 1.35;
+}
+
+.formulation-note-wide {
+  grid-column: 1 / -1;
+}
+
+.formulation-note-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.formulation-formula-btn {
+  width: 25px;
+  height: 25px;
+  font-size: 17px;
+}
+
+.formulation-formula {
+  margin-top: 0.35rem;
+  padding-top: 0.35rem;
+  border-top: 1px dashed var(--c-border);
+  text-align: center;
+  animation: para-slide-down 0.2s ease-out;
+}
+
+.formulation-formula > span {
+  display: block;
+  font-size: 1.08rem;
+}
+
+.formulation-graph-panel {
+  padding: 0.35rem 0.55rem;
+  max-height: 198px;
+}
+
+.formulation-graph-panel .problem-bipartite-wrap {
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+}
+
+.formulation-graph-panel .problem-bipartite-wrap > :first-child {
+  flex: 0 0 385px;
+  max-width: 385px;
+  margin-inline: auto;
+}
+
+.formulation-objective-formula {
+  margin-top: 0.35rem;
+  text-align: center;
+  font-size: 1.08rem;
+}
+
+/* ===== Optimality bridge slide ===== */
+.bridge-card-stack {
+  margin-top: 1.15rem;
+}
+
+.bridge-large-card {
+  padding: 1rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+.bridge-combined-card {
+  min-height: 258px;
+}
+
+.bridge-large-content {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.bridge-combined-content {
+  display: grid;
+  align-content: center;
+  gap: 1.15rem;
+}
+
+.bridge-formula-content > span {
+  display: block;
+  font-size: 1.42rem;
+}
+
+.bridge-combined-divider {
+  width: 78%;
+  height: 1px;
+  margin-inline: auto;
+  background: color-mix(in srgb, var(--c-border) 82%, transparent);
+}
+
+.bridge-question-content {
+  padding-inline: 0.75rem;
+  font-size: 1.28rem;
+  line-height: 1.5;
+}
+
+/* ===== Labels definition slide ===== */
+.labels-stack {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.labels-theorem-card,
+.labels-mini-card,
+.labels-conclusion-card {
+  padding: 0.72rem 0.95rem;
+  border: 1px solid var(--c-border);
+  border-left: 4px solid var(--c-primary);
+  border-radius: 10px;
+  background: rgba(255, 252, 245, 0.72);
+  box-shadow: 0 1px 3px rgba(120, 90, 40, 0.07);
+}
+
+.labels-definition-row,
+.labels-bound-row {
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.labels-formula {
+  flex: 1;
+  text-align: center;
+  font-size: 1.18rem;
+}
+
+.labels-edge-diagram {
+  flex: 0 0 270px;
+  display: flex;
+  justify-content: center;
+  border-left: 1px dashed var(--c-border);
+  animation: para-slide-down 0.22s ease-out;
+}
+
+.labels-edge-diagram > * {
+  margin-inline: auto;
+}
+
+.labels-explain-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.labels-mini-card {
+  border-left-color: var(--c-accent);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.labels-bound-card {
+  padding-block: 0.62rem;
+}
+
+.labels-bound-copy {
+  color: var(--c-text-dim);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.labels-bound-row {
+  min-height: 50px;
+}
+
+.labels-bulb-btn {
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+}
+
+.labels-result-flow {
+  display: grid;
+  justify-items: center;
+  gap: 0.18rem;
+  animation: para-slide-down 0.22s ease-out;
+}
+
+.labels-flow-arrow {
+  color: var(--c-primary);
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.labels-conclusion-card {
+  width: min(520px, 78%);
+  padding-block: 0.58rem;
+  border-left-color: var(--c-accent);
+  text-align: center;
+  font-size: 1.08rem;
+  font-weight: 600;
+}
+
+.labels-conclusion-card .term-star {
+  color: var(--c-accent);
+}
+
 /* ===== Page 02 collapsible ===== */
-.para-collapsible {
+.problem-card {
+  display: flex;
   flex-direction: column;
+  gap: 0.42rem;
+}
+
+.problem-card-main {
+  align-items: center;
+  gap: 0.95rem;
+}
+
+.problem-card-copy {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.02rem;
+  line-height: 1.42;
+}
+
+.problem-toggle-btn {
+  width: 29px;
+  height: 29px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: var(--c-primary-soft);
+  color: var(--c-primary);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(120, 90, 40, 0.08);
+}
+
+.problem-toggle-btn:hover {
+  opacity: 0.85;
+}
+
+.problem-toggle-panel {
+  padding: 0.68rem 0.88rem;
+  max-height: 400px;
+  overflow: hidden;
+  animation: para-slide-down 0.25s ease-out;
+}
+
+.problem-bipartite-wrap {
+  align-items: flex-start;
+  gap: 0.85rem;
+  flex-wrap: nowrap;
+}
+
+.problem-bipartite-wrap > :first-child {
+  flex: 0 0 245px;
+  max-width: 245px;
+}
+
+.problem-bipartite-question {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.96rem;
+  line-height: 1.38;
+  padding: 0.76rem 0.9rem;
+}
+
+.para-collapsible {
+
   align-items: stretch;
   gap: 0;
   padding: 0;
