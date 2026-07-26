@@ -310,6 +310,24 @@
   border-top: 1px dashed var(--c-border);
 }
 
+.bridge-mediator-formula {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.bridge-mediator-highlight {
+  display: inline-flex;
+  padding: 0.2rem 0.48rem;
+  border-radius: 8px;
+  background: var(--c-primary-soft);
+}
+
+.bridge-mediator-highlight .katex {
+  color: var(--c-accent);
+}
+
 /* ===== Labels definition slide ===== */
 .labels-stack {
   margin-top: 0.75rem;
@@ -355,6 +373,11 @@
   margin-inline: auto;
 }
 
+.labels-edge-diagram .bg-weight-chip {
+  fill: #f4e1d1 !important;
+  stroke: #e4bea0 !important;
+}
+
 .labels-explain-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -379,6 +402,24 @@
 
 .labels-bound-row {
   min-height: 50px;
+}
+
+.labels-bound-formula {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.labels-bound-highlight {
+  display: inline-flex;
+  padding: 0.2rem 0.48rem;
+  border-radius: 8px;
+  background: var(--c-primary-soft);
+}
+
+.labels-bound-highlight .katex {
+  color: var(--c-accent);
 }
 
 .labels-bulb-btn {
@@ -412,6 +453,123 @@
 
 .labels-conclusion-card .term-star {
   color: var(--c-accent);
+}
+
+/* ===== Optimality theorem cards ===== */
+.optimality-theorem-stack {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.62rem;
+}
+
+.optimality-theorem-card {
+  min-height: 92px;
+  padding: 0.72rem 1.1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid var(--c-border);
+  border-left: 4px solid var(--c-primary);
+  border-radius: 10px;
+  background: rgba(255, 252, 245, 0.72);
+  box-shadow: 0 1px 3px rgba(120, 90, 40, 0.07);
+}
+
+.optimality-theorem-card-final {
+  border-left-color: var(--c-accent);
+}
+
+.optimality-theorem-copy {
+  font-size: 1.02rem;
+  font-weight: 600;
+  line-height: 1.42;
+}
+
+.optimality-theorem-formula {
+  min-width: 0;
+  text-align: center;
+  font-size: 1.22rem;
+}
+
+.optimality-theorem-formula-wide {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  font-size: 1.05rem;
+}
+
+.optimality-sum-highlight {
+  display: inline-flex;
+  padding: 0.2rem 0.48rem;
+  border-radius: 8px;
+  background: var(--c-primary-soft);
+}
+
+.optimality-sum-highlight .katex {
+  color: var(--c-accent);
+}
+
+.reformulation-equality-card {
+  gap: 0;
+}
+
+.reformulation-equality-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.reformulation-equality-definition {
+  margin-top: 0.68rem;
+  padding-top: 0.65rem;
+  border-top: 1px dashed var(--c-border);
+  text-align: center;
+  animation: para-slide-down 0.25s ease-out;
+}
+
+.reformulation-definition-title {
+  margin-bottom: 0.32rem;
+  color: var(--c-muted);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.reformulation-definition-formula {
+  font-size: 1.08rem;
+}
+
+.reformulation-goal-highlight .katex {
+  color: var(--c-accent);
+}
+
+/* ===== Default vertex labels card ===== */
+.default-label-card {
+  margin-top: 0.75rem;
+  padding: 0.78rem 1.05rem;
+  display: grid;
+  gap: 0.45rem;
+  border: 1px solid var(--c-border);
+  border-left: 4px solid var(--c-primary);
+  border-radius: 10px;
+  background: rgba(255, 252, 245, 0.72);
+  box-shadow: 0 1px 3px rgba(120, 90, 40, 0.07);
+}
+
+.default-label-copy {
+  color: var(--c-text-dim);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.default-label-formula {
+  text-align: center;
+  font-size: 1.2rem;
 }
 
 /* ===== Page 02 collapsible ===== */
@@ -607,21 +765,6 @@
   letter-spacing: 0.02em;
 }
 
-.eq-derivation {
-  margin-top: 1rem;
-  padding: 0.7rem 1.2rem;
-  background: rgba(255, 252, 245, 0.7);
-  border: 1px solid var(--c-border);
-  border-radius: 10px;
-}
-
-.eq-derivation .katex {
-  font-size: 1rem;
-}
-
-.eq-derivation .katex-display {
-  margin: 0.3rem 0;
-}
 
 /* ===== Demo of M-Augmenting ===== */
 .demo-caption {
