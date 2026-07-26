@@ -223,8 +223,7 @@ layout: default
 
 <script setup>
 import { ref } from 'vue'
-const showMediatorFormula = ref(false)
-const showNextQuestion = ref(false)
+const showBridgeReveal = ref(false)
 const bridgeOptimalMath = String.raw`$M^*$`
 const definitionInequalityMath = String.raw`$w(M^*) \ge w(M)$`
 const mediatorInequalityMath = String.raw`$w(M^*) = \text{???} \ge w(M)$`
@@ -233,24 +232,20 @@ const mediatorInequalityMath = String.raw`$w(M^*) = \text{???} \ge w(M)$`
 # How to Verify Optimality?
 
 <div class="bridge-card-stack">
-  <div class="para bridge-large-card">
+  <div class="para bridge-large-card bridge-combined-card">
     <span class="para-num">01</span>
-    <div class="bridge-large-content bridge-formula-content">
-      <MathText :text="showMediatorFormula ? mediatorInequalityMath : definitionInequalityMath" />
+    <div class="bridge-combined-content">
+      <div class="bridge-large-content bridge-formula-content">
+        <MathText :text="showBridgeReveal ? mediatorInequalityMath : definitionInequalityMath" />
+      </div>
+      <div class="bridge-combined-divider"></div>
+      <div class="bridge-large-content bridge-question-content">
+        <div v-if="!showBridgeReveal">How can we quickly verify that our chosen <MathText :text="bridgeOptimalMath" /> satisfies this inequality?</div>
+        <div v-else>Perhaps we can find an <span class="term-star">intermediate quantity</span>?</div>
+      </div>
     </div>
-    <button class="problem-toggle-btn" @click="showMediatorFormula = !showMediatorFormula">
-      {{ showMediatorFormula ? '←' : '→' }}
-    </button>
-  </div>
-
-  <div class="para bridge-large-card">
-    <span class="para-num">02</span>
-    <div class="bridge-large-content bridge-question-content">
-      <div v-if="!showNextQuestion">How can we quickly verify that our chosen <MathText :text="bridgeOptimalMath" /> satisfies this inequality?</div>
-      <div v-else>Perhaps we can find an <span class="term-star">intermediate quantity</span>?</div>
-    </div>
-    <button class="problem-toggle-btn" @click="showNextQuestion = !showNextQuestion">
-      {{ showNextQuestion ? '←' : '→' }}
+    <button class="problem-toggle-btn" @click="showBridgeReveal = !showBridgeReveal">
+      {{ showBridgeReveal ? '←' : '→' }}
     </button>
   </div>
 </div>

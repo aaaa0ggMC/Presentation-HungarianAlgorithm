@@ -292,6 +292,24 @@
   line-height: 1.5;
 }
 
+.bridge-combined-card {
+  min-height: 250px;
+}
+
+.bridge-combined-content {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 0.9rem;
+  text-align: center;
+}
+
+.bridge-combined-divider {
+  width: 72%;
+  margin-inline: auto;
+  border-top: 1px dashed var(--c-border);
+}
+
 /* ===== Labels definition slide ===== */
 .labels-stack {
   margin-top: 0.75rem;
