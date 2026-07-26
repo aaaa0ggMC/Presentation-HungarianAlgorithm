@@ -40,64 +40,86 @@ layout: default
 
 <script setup>
 import { ref } from 'vue'
-const open02 = ref(false)
+const showProblem01 = ref(false)
+const showProblem02 = ref(false)
 </script>
 
-# The Problem
+# Optimization Objective
 
 <div class="mt-8 space-y-6 text-lg leading-relaxed">
 
-<div class="para"><span class="para-num">01</span>
-
-In previous courses, we learned how to match partners via the <span class="term">Greedy</span> algorithm, and how to make a stable marriage with the aid of the <span class="term">Gale–Shapley</span> algorithm.
-
-</div>
-
-<div class="para para-collapsible" :class="{ 'para-open': open02 }">
-  <div class="para-header" @click="open02 = !open02">
-    <span class="para-num">02</span>
-    <div class="para-intro">
-
-But in *our* problem — given $n$ guys and $n$ girls — we want to find a <span class="term">maximum-score perfect matching</span>. For this, the previous methods fall short.
-
+<div class="problem-card">
+  <div class="para problem-card-main">
+    <span class="para-num">01</span>
+    <div class="problem-card-copy">
+      <span class="term-star">Stable Marriage Matching:</span>
+      the objective is <span class="term">Stability</span>, using <span class="term">Gale-Sharply Algorithm</span>
+    </div>
+    <button class="problem-toggle-btn" @click="showProblem01 = !showProblem01">
+      {{ showProblem01 ? '−' : '+' }}
+    </button>
   </div>
-    <span class="para-toggle">{{ open02 ? '−' : '+' }}</span>
-  </div>
-
-  <div v-if="open02" class="para-body" @wheel.stop>
-    <div class="bipartite-wrap">
+  <div v-if="showProblem01" class="para problem-toggle-panel">
+    <div class="bipartite-wrap problem-bipartite-wrap">
       <BipartiteGraph
         :left-count="4"
         :right-count="4"
-        left-title="Boys"
-        right-title="Girls"
-        :width="380"
-        :height="240"
-        :node-radius="14"
+        left-title="b"
+        right-title="g"
+        :width="230"
+                        :height="152"
+                        :node-radius="9.5"
         :edges="[
-          { from: 0, to: 3, weight: 3 },
-          { from: 1, to: 2, weight: 5 },
-          { from: 2, to: 0, weight: 6 },
-          { from: 2, to: 2, weight: 4 },
-          { from: 3, to: 0, weight: 7 },
-          { from: 3, to: 3, weight: 6 },
-          { from: 0, to: 1, weight: 9, highlighted: true },
-          { from: 1, to: 0, weight: 8, highlighted: true },
-          { from: 2, to: 3, weight: 7, highlighted: true },
-          { from: 3, to: 2, weight: 9, highlighted: true },
-        ]"
+                  { from: 0, to: 0, weight: 10, highlighted: true },
+                  { from: 1, to: 3, weight: 5, highlighted: true },
+                  { from: 2, to: 2, weight: 10, highlighted: true },
+                  { from: 3, to: 1, weight: 5, highlighted: true },
+                ]"
       />
-      <div class="bipartite-question">
-        How to get the <em>maximum-score</em> matching?
+      <div class="bipartite-question problem-bipartite-question">
+        Stable marriage result:
+        <strong>(A₁,B₁), (A₂,B₄), (A₃,B₃), (A₄,B₂)</strong>.
+        The total weight is <strong>10 + 5 + 10 + 5 = 30</strong>, but the focus is stability rather than the global sum.
       </div>
     </div>
   </div>
 </div>
 
-<div class="para"><span class="para-num">03</span>
-
-We need a new algorithm, designed by two Hungarian mathematicians — the <span class="term-star">Hungarian Algorithm</span>.
-
+<div class="problem-card">
+  <div class="para problem-card-main">
+    <span class="para-num">02</span>
+    <div class="problem-card-copy">
+      <span class="term-star">Maximum-Weight Perfect Matching:</span>
+      the objective is <span class="term"> Total Weight</span>, using <span class="term">Hungarian Algorithm</span>
+    </div>
+    <button class="problem-toggle-btn" @click="showProblem02 = !showProblem02">
+      {{ showProblem02 ? '−' : '+' }}
+    </button>
+  </div>
+  <div v-if="showProblem02" class="para problem-toggle-panel">
+    <div class="bipartite-wrap problem-bipartite-wrap">
+      <BipartiteGraph
+        :left-count="4"
+        :right-count="4"
+        left-title="b"
+        right-title="g"
+        :width="230"
+                        :height="152"
+                        :node-radius="9.5"
+        :edges="[
+                  { from: 0, to: 0, weight: 10, highlighted: true },
+                  { from: 1, to: 1, weight: 10, highlighted: true },
+                  { from: 2, to: 2, weight: 10, highlighted: true },
+                  { from: 3, to: 3, weight: 10, highlighted: true },
+                ]"
+      />
+      <div class="bipartite-question problem-bipartite-question">
+        Maximum-weight perfect matching result:
+        <strong>(A₁,B₁), (A₂,B₂), (A₃,B₃), (A₄,B₄)</strong>.
+        The total weight is <strong>10 + 10 + 10 + 10 = 40</strong>, which is the global optimum.
+      </div>
+    </div>
+  </div>
 </div>
 
 </div>
@@ -106,26 +128,91 @@ We need a new algorithm, designed by two Hungarian mathematicians — the <span 
 layout: default
 ---
 
-# Love Scores Matching Problem
+<script setup>
+import { ref } from 'vue'
+const showWeightFormula = ref(false)
+const showBipartiteModel = ref(false)
+const boysSetMath = String.raw`$B=\{b_1,b_2,\dots,b_n\}$`
+const girlsSetMath = String.raw`$G=\{g_1,g_2,\dots,g_n\}$`
+const edgeWeightMath = String.raw`$w(b_i,g_j)$`
+const boyMath = String.raw`$b_i$`
+const girlMath = String.raw`$g_j$`
+const matchingMath = String.raw`$M$`
+const matchingWeightMath = String.raw`$w(M)$`
+const totalWeightFormulaMath = String.raw`$w(M)=\sum_{(b_i,g_j)\in M}w(b_i,g_j).$`
+const graphDefinitionMath = String.raw`$G=(V,E)$, $V=B\cup G$`
+const optimalMatchingMath = String.raw`$M^*$`
+const objectiveMath = String.raw`$w(M^*)=\max\,\{w(M)\}$`
+</script>
 
-<div class="mt-8 space-y-6 text-lg leading-relaxed">
+# Problem Formulation
 
-<div class="para"><span class="para-num">01</span>
+<div class="mt-8 space-y-5 text-lg leading-relaxed">
 
-**Goal.** Given $n$ boys and $n$ girls, every potential couple $(b_i, g_j)$ has a <span class="term">love score</span> $w(b_i,g_j) \in \mathbb{R}$.
-
+<div class="problem-card">
+  <div class="para problem-card-main">
+    <span class="para-num">01</span>
+    <div class="problem-card-copy">
+      Given a <span class="term">Complete Bipartite Graph</span> <MathText :text="graphDefinitionMath" />, find a matching <MathText :text="optimalMatchingMath" /> such that
+      <div class="formulation-objective-formula"><MathText :text="objectiveMath" /></div>
+    </div>
+    <button class="problem-toggle-btn" @click="showBipartiteModel = !showBipartiteModel">
+      {{ showBipartiteModel ? '−' : '+' }}
+    </button>
+  </div>
+  <div v-if="showBipartiteModel" class="para problem-toggle-panel formulation-graph-panel">
+    <div class="bipartite-wrap problem-bipartite-wrap">
+      <BipartiteGraph
+        :left-count="3"
+        :right-count="3"
+        :left-labels="['b_1','b_2','b_3']"
+        :left-labels-latex="true"
+        :right-labels="['g_1','g_2','g_3']"
+        :right-labels-latex="true"
+        :width="380"
+        :height="180"
+        :node-radius="11"
+        :edges="[
+          { from: 0, to: 0, weight: 3 },
+          { from: 0, to: 1, weight: 5 },
+          { from: 0, to: 2, weight: 1 },
+          { from: 1, to: 0, weight: 2 },
+          { from: 1, to: 1, weight: 7 },
+          { from: 1, to: 2, weight: 4 },
+          { from: 2, to: 0, weight: 6 },
+          { from: 2, to: 1, weight: 2 },
+          { from: 2, to: 2, weight: 5 },
+        ]"
+      />
+    </div>
+  </div>
 </div>
 
 <div class="para"><span class="para-num">02</span>
 
-A <span class="term">perfect matching</span> $M$ is a set of $n$ disjoint boy–girl pairs — everyone is matched to exactly one partner.
+<div class="formulation-notes">
 
+<div class="formulation-note"><span class="term"><MathText :text="boysSetMath" /></span><span>: the set of boys</span></div>
+
+<div class="formulation-note"><span class="term"><MathText :text="girlsSetMath" /></span><span>: the set of girls</span></div>
+
+<div class="formulation-note"><span class="term"><MathText :text="edgeWeightMath" /></span><span>: the weight gained by matching <MathText :text="boyMath" /> with <MathText :text="girlMath" /></span></div>
+
+<div class="formulation-note"><span class="term"><MathText :text="matchingMath" /></span><span>: a Perfect Matching</span></div>
+
+<div class="formulation-note formulation-note-wide">
+  <div class="formulation-note-row">
+    <div><span class="term"><MathText :text="matchingWeightMath" /></span><span>: the Total Weight of matching <MathText :text="matchingMath" /></span></div>
+    <button class="problem-toggle-btn formulation-formula-btn" @click="showWeightFormula = !showWeightFormula">
+      {{ showWeightFormula ? '−' : '+' }}
+    </button>
+  </div>
+  <div v-if="showWeightFormula" class="formulation-formula">
+    <MathText :text="totalWeightFormulaMath" />
+  </div>
 </div>
 
-<div class="para"><span class="para-num">03</span>
-
-Find a perfect matching $M^*$ whose **total score** is the greatest among all perfect matchings.
-
+</div>
 </div>
 
 </div>
@@ -134,34 +221,188 @@ Find a perfect matching $M^*$ whose **total score** is the greatest among all pe
 layout: default
 ---
 
-# The Bipartite Model
+<script setup>
+import { ref } from 'vue'
+const showMediatorFormula = ref(false)
+const showNextQuestion = ref(false)
+const bridgeOptimalMath = String.raw`$M^*$`
+const definitionInequalityMath = String.raw`$w(M^*) \ge w(M)$`
+const mediatorInequalityMath = String.raw`$w(M^*) = \text{???} \ge w(M)$`
+</script>
 
-<div class="graph-center-wrap">
-  <BipartiteGraph
-    :left-count="3"
-    :right-count="3"
-    :left-labels="['B_1','B_2','B_3']"
-    :left-labels-latex="true"
-    :right-labels="['G_1','G_2','G_3']"
-    :right-labels-latex="true"
-    :width="340"
-    :height="240"
-    :node-radius="16"
-    :edges="[
-      { from: 0, to: 0, weight: 3 },
-      { from: 0, to: 1, weight: 5 },
-      { from: 0, to: 2, weight: 1 },
-      { from: 1, to: 0, weight: 2 },
-      { from: 1, to: 1, weight: 7 },
-      { from: 1, to: 2, weight: 4 },
-      { from: 2, to: 0, weight: 6 },
-      { from: 2, to: 1, weight: 2 },
-      { from: 2, to: 2, weight: 5 },
-    ]"
-  />
-  <div class="graph-caption">
-    <MathText text="$G = (V,E)$, $w(M)$: total score of matching $M$" />
+# How to Verify Optimality?
+
+<div class="bridge-card-stack">
+  <div class="para bridge-large-card">
+    <span class="para-num">01</span>
+    <div class="bridge-large-content bridge-formula-content">
+      <MathText :text="showMediatorFormula ? mediatorInequalityMath : definitionInequalityMath" />
+    </div>
+    <button class="problem-toggle-btn" @click="showMediatorFormula = !showMediatorFormula">
+      {{ showMediatorFormula ? '←' : '→' }}
+    </button>
   </div>
+
+  <div class="para bridge-large-card">
+    <span class="para-num">02</span>
+    <div class="bridge-large-content bridge-question-content">
+      <div v-if="!showNextQuestion">How can we quickly verify that our chosen <MathText :text="bridgeOptimalMath" /> satisfies this inequality?</div>
+      <div v-else>Perhaps we can find an <span class="term-star">intermediate quantity</span>?</div>
+    </div>
+    <button class="problem-toggle-btn" @click="showNextQuestion = !showNextQuestion">
+      {{ showNextQuestion ? '←' : '→' }}
+    </button>
+  </div>
+</div>
+
+---
+
+<script setup>
+import { ref } from 'vue'
+const showLabelDiagram = ref(false)
+const showLabelConclusion = ref(false)
+const feasibleLabelMath = String.raw`$h(b_i)+h(g_j)\ge w(b_i,g_j)$`
+const boyLabelMath = String.raw`$h(b_i)$`
+const girlLabelMath = String.raw`$h(g_j)$`
+const boyVertexMath = String.raw`$b_i$`
+const girlVertexMath = String.raw`$g_j$`
+const upperBoundMath = String.raw`$\sum_{b_i\in B}h(b_i)+\sum_{g_j\in G}h(g_j)\ge w(M)$`
+</script>
+
+# Labels
+
+<div class="labels-stack">
+  <div class="labels-theorem-card">
+    <div class="labels-definition-row">
+      <div class="labels-formula"><MathText :text="feasibleLabelMath" /></div>
+      <button class="problem-toggle-btn" @click="showLabelDiagram = !showLabelDiagram">
+        {{ showLabelDiagram ? '−' : '+' }}
+      </button>
+      <div v-if="showLabelDiagram" class="labels-edge-diagram">
+        <BipartiteGraph
+          :left-count="1"
+          :right-count="1"
+          :left-labels="['b_i']"
+          :left-labels-latex="true"
+          :right-labels="['g_j']"
+          :right-labels-latex="true"
+          :left-outer-labels="['h(b_i)']"
+          :right-outer-labels="['h(g_j)']"
+          :outer-labels-latex="true"
+          :width="250"
+          :height="118"
+          :node-radius="13"
+          :outer-label-offset="8"
+          :edges="[{ from: 0, to: 0, weight: 'w(b_i,g_j)', weightLatex: true, highlighted: true }]"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="labels-explain-grid">
+    <div class="labels-mini-card"><span class="term"><MathText :text="boyLabelMath" /></span>: the vertex label of <MathText :text="boyVertexMath" /></div>
+    <div class="labels-mini-card"><span class="term"><MathText :text="girlLabelMath" /></span>: the vertex label of <MathText :text="girlVertexMath" /></div>
+  </div>
+
+  <div class="labels-theorem-card labels-bound-card">
+    <div class="labels-bound-copy">From this definition, we obtain:</div>
+    <div class="labels-bound-row">
+      <div class="labels-formula"><MathText :text="upperBoundMath" /></div>
+      <button class="problem-toggle-btn labels-bulb-btn" @click="showLabelConclusion = !showLabelConclusion" aria-label="Reveal the intermediate quantity">
+        {{ showLabelConclusion ? '−' : '💡' }}
+      </button>
+    </div>
+  </div>
+
+  <div v-if="showLabelConclusion" class="labels-result-flow">
+    <div class="labels-flow-arrow" aria-hidden="true">↓</div>
+    <div class="labels-conclusion-card">This is actually the <span class="term-star">intermediate quantity!</span></div>
+  </div>
+</div>
+
+---
+
+# Equality Graph
+
+The edges of a maximum-score perfect matching must always satisfy $h(b_i) + h(g_j) = w(b_i, g_j)$.
+
+What about the other edges that don't satisfy this?
+
+**Just forget them.** Transform $G$ into $G_h$ — the **equality graph** of $G$ — keeping only edges where the condition holds:
+
+$$
+G_h = (V, E_h), \qquad E_h = \{\, (b_i,g_j) \mid h(b_i) + h(g_j) = w(b_i,g_j) \,\}
+$$
+
+If a perfect matching $M^*$ exists in $G_h$, then $M^*$ is also the maximum-score perfect matching in the original $G$.
+
+---
+
+# So Why?
+
+<div class="eq-side">
+  <div class="eq-col">
+    <div class="eq-title"><MathText text="$G$" /></div>
+    <BipartiteGraph
+      :left-count="4"
+      :right-count="4"
+      :left-labels="['b_1','b_2','b_3','b_4']"
+      :left-labels-latex="true"
+      :right-labels="['g_1','g_2','g_3','g_4']"
+      :right-labels-latex="true"
+      :width="240"
+      :height="150"
+      :node-radius="9"
+      :edges="[
+        { from: 0, to: 0, weight: 5 }, { from: 0, to: 1, weight: 3 },
+        { from: 0, to: 2, weight: 2 }, { from: 0, to: 3, weight: 1 },
+        { from: 1, to: 0, weight: 2 }, { from: 1, to: 1, weight: 4 },
+        { from: 1, to: 2, weight: 7 }, { from: 1, to: 3, weight: 3 },
+        { from: 2, to: 0, weight: 1 }, { from: 2, to: 1, weight: 6 },
+        { from: 2, to: 2, weight: 3 }, { from: 2, to: 3, weight: 4 },
+        { from: 3, to: 0, weight: 3 }, { from: 3, to: 1, weight: 2 },
+        { from: 3, to: 2, weight: 1 }, { from: 3, to: 3, weight: 8 },
+      ]"
+    />
+  </div>
+  <div class="eq-col">
+    <div class="eq-title"><MathText text="$G_h$" /></div>
+    <BipartiteGraph
+      :left-count="4"
+      :right-count="4"
+      :left-labels="['b_1','b_2','b_3','b_4']"
+      :left-labels-latex="true"
+      :right-labels="['g_1','g_2','g_3','g_4']"
+      :right-labels-latex="true"
+      :left-outer-labels="['5','7','6','8']"
+      :outer-labels-latex="true"
+      :width="240"
+      :height="150"
+      :node-radius="9"
+      :outer-label-offset="6"
+      :edges="[
+        { from: 0, to: 0, weight: 5, highlighted: true },
+        { from: 1, to: 2, weight: 7, highlighted: true },
+        { from: 2, to: 1, weight: 6, highlighted: true },
+        { from: 3, to: 3, weight: 8, highlighted: true },
+      ]"
+    />
+  </div>
+</div>
+
+<div class="eq-derivation">
+
+$$
+\begin{aligned}
+w(M) &= \sum_{(b_i,g_j)\in M} w(b_i,g_j) \\
+     &\le \sum_{(b_i,g_j)\in M} \bigl(h(b_i) + h(g_j)\bigr) \\
+     &= \sum_{i} h(b_i) + \sum_{j} h(g_j) \\
+     &= w(M^*)
+\end{aligned}
+$$
+
+$\sum h = 5+7+6+8 = 26$ is the upper bound. The matching in $G_h$ hits it — so it is optimal.
+
 </div>
 
 ---
@@ -206,6 +447,68 @@ We still aim high, but use **vertex labels** to systematically resolve conflicts
 
 ---
 
+# Solution v0.1
+
+With labels and equality graph, we can now tackle the overlap problem.
+
+> A boy can have **multiple best-lovers** — all scoring the same max value $h(b_i)$. There always exists a solution where every boy finds one of his best-lovers.
+
+<div class="eq-side">
+  <div class="eq-col">
+    <div class="eq-title"><MathText text="$G$" /></div>
+    <BipartiteGraph
+      :left-count="4"
+      :right-count="4"
+      :left-labels="['b_1','b_2','b_3','b_4']"
+      :left-labels-latex="true"
+      :right-labels="['g_1','g_2','g_3','g_4']"
+      :right-labels-latex="true"
+      :width="230"
+      :height="170"
+      :node-radius="9"
+      :edges="[
+        { from: 0, to: 0, weight: 5 }, { from: 0, to: 1, weight: 5 },
+        { from: 0, to: 2, weight: 2 }, { from: 0, to: 3, weight: 1 },
+        { from: 1, to: 0, weight: 3 }, { from: 1, to: 1, weight: 7 },
+        { from: 1, to: 2, weight: 7 }, { from: 1, to: 3, weight: 4 },
+        { from: 2, to: 0, weight: 6 }, { from: 2, to: 1, weight: 3 },
+        { from: 2, to: 2, weight: 3 }, { from: 2, to: 3, weight: 2 },
+        { from: 3, to: 0, weight: 1 }, { from: 3, to: 1, weight: 2 },
+        { from: 3, to: 2, weight: 2 }, { from: 3, to: 3, weight: 8 },
+      ]"
+    />
+  </div>
+  <div class="eq-col">
+    <div class="eq-title"><MathText text="$G_h$" /></div>
+    <BipartiteGraph
+      :left-count="4"
+      :right-count="4"
+      :left-labels="['b_1','b_2','b_3','b_4']"
+      :left-labels-latex="true"
+      :right-labels="['g_1','g_2','g_3','g_4']"
+      :right-labels-latex="true"
+      :left-outer-labels="['5','7','6','8']"
+      :outer-labels-latex="true"
+      :width="230"
+      :height="170"
+      :node-radius="9"
+      :outer-label-offset="6"
+      :edges="[
+        { from: 0, to: 0, weight: 5, highlighted: true },
+        { from: 0, to: 1, weight: 5, highlighted: true },
+        { from: 1, to: 1, weight: 7, highlighted: true },
+        { from: 1, to: 2, weight: 7, highlighted: true },
+        { from: 2, to: 0, weight: 6, highlighted: true },
+        { from: 3, to: 3, weight: 8, highlighted: true },
+      ]"
+    />
+  </div>
+</div>
+
+Now the problem reduces to finding a **perfect matching** in an unweighted graph $G_h$ — scores no longer matter.
+
+---
+
 # Labels
 
 Each vertex gets a **default** label (call it $h$ or $\ell$):
@@ -227,9 +530,9 @@ Since each $h(b_i)$ is $b_i$'s highest possible score, $\sum h$ is an **upper bo
   <BipartiteGraph
     :left-count="3"
     :right-count="3"
-    :left-labels="['B_1','B_2','B_3']"
+    :left-labels="['b_1','b_2','b_3']"
     :left-labels-latex="true"
-    :right-labels="['G_1','G_2','G_3']"
+    :right-labels="['g_1','g_2','g_3']"
     :right-labels-latex="true"
     :left-outer-labels="['5','7','6']"
     :right-outer-labels="['0','0','0']"
@@ -254,153 +557,6 @@ Since each $h(b_i)$ is $b_i$'s highest possible score, $\sum h$ is an **upper bo
     <MathText text="$\Sigma h = 5+7+6 = 18$ — upper bound" />
   </div>
 </div>
-
----
-
-# Equality Graph
-
-The edges of a maximum-score perfect matching must always satisfy $h(b_i) + h(g_j) = w(b_i, g_j)$.
-
-What about the other edges that don't satisfy this?
-
-**Just forget them.** Transform $G$ into $G_h$ — the **equality graph** of $G$ — keeping only edges where the condition holds:
-
-$$
-G_h = (V, E_h), \qquad E_h = \{\, (b_i,g_j) \mid h(b_i) + h(g_j) = w(b_i,g_j) \,\}
-$$
-
-If a perfect matching $M^*$ exists in $G_h$, then $M^*$ is also the maximum-score perfect matching in the original $G$.
-
----
-
-# So Why?
-
-<div class="eq-side">
-  <div class="eq-col">
-    <div class="eq-title"><MathText text="$G$" /></div>
-    <BipartiteGraph
-      :left-count="4"
-      :right-count="4"
-      :left-labels="['B_1','B_2','B_3','B_4']"
-      :left-labels-latex="true"
-      :right-labels="['G_1','G_2','G_3','G_4']"
-      :right-labels-latex="true"
-      :width="240"
-      :height="150"
-      :node-radius="9"
-      :edges="[
-        { from: 0, to: 0, weight: 5 }, { from: 0, to: 1, weight: 3 },
-        { from: 0, to: 2, weight: 2 }, { from: 0, to: 3, weight: 1 },
-        { from: 1, to: 0, weight: 2 }, { from: 1, to: 1, weight: 4 },
-        { from: 1, to: 2, weight: 7 }, { from: 1, to: 3, weight: 3 },
-        { from: 2, to: 0, weight: 1 }, { from: 2, to: 1, weight: 6 },
-        { from: 2, to: 2, weight: 3 }, { from: 2, to: 3, weight: 4 },
-        { from: 3, to: 0, weight: 3 }, { from: 3, to: 1, weight: 2 },
-        { from: 3, to: 2, weight: 1 }, { from: 3, to: 3, weight: 8 },
-      ]"
-    />
-  </div>
-  <div class="eq-col">
-    <div class="eq-title"><MathText text="$G_h$" /></div>
-    <BipartiteGraph
-      :left-count="4"
-      :right-count="4"
-      :left-labels="['B_1','B_2','B_3','B_4']"
-      :left-labels-latex="true"
-      :right-labels="['G_1','G_2','G_3','G_4']"
-      :right-labels-latex="true"
-      :left-outer-labels="['5','7','6','8']"
-      :outer-labels-latex="true"
-      :width="240"
-      :height="150"
-      :node-radius="9"
-      :outer-label-offset="6"
-      :edges="[
-        { from: 0, to: 0, weight: 5, highlighted: true },
-        { from: 1, to: 2, weight: 7, highlighted: true },
-        { from: 2, to: 1, weight: 6, highlighted: true },
-        { from: 3, to: 3, weight: 8, highlighted: true },
-      ]"
-    />
-  </div>
-</div>
-
-<div class="eq-derivation">
-
-$$
-\begin{aligned}
-w(M) &= \sum_{(b_i,g_j)\in M} w(b_i,g_j) \\
-     &\le \sum_{(b_i,g_j)\in M} \bigl(h(b_i) + h(g_j)\bigr) \\
-     &= \sum_{i} h(b_i) + \sum_{j} h(g_j) \\
-     &= w(M^*)
-\end{aligned}
-$$
-
-$\sum h = 5+7+6+8 = 26$ is the upper bound. The matching in $G_h$ hits it — so it is optimal.
-
-</div>
-
----
-
-# Solution v0.1
-
-With labels and equality graph, we can now tackle the overlap problem.
-
-> A boy can have **multiple best-lovers** — all scoring the same max value $h(b_i)$. There always exists a solution where every boy finds one of his best-lovers.
-
-<div class="eq-side">
-  <div class="eq-col">
-    <div class="eq-title"><MathText text="$G$" /></div>
-    <BipartiteGraph
-      :left-count="4"
-      :right-count="4"
-      :left-labels="['B_1','B_2','B_3','B_4']"
-      :left-labels-latex="true"
-      :right-labels="['G_1','G_2','G_3','G_4']"
-      :right-labels-latex="true"
-      :width="230"
-      :height="170"
-      :node-radius="9"
-      :edges="[
-        { from: 0, to: 0, weight: 5 }, { from: 0, to: 1, weight: 5 },
-        { from: 0, to: 2, weight: 2 }, { from: 0, to: 3, weight: 1 },
-        { from: 1, to: 0, weight: 3 }, { from: 1, to: 1, weight: 7 },
-        { from: 1, to: 2, weight: 7 }, { from: 1, to: 3, weight: 4 },
-        { from: 2, to: 0, weight: 6 }, { from: 2, to: 1, weight: 3 },
-        { from: 2, to: 2, weight: 3 }, { from: 2, to: 3, weight: 2 },
-        { from: 3, to: 0, weight: 1 }, { from: 3, to: 1, weight: 2 },
-        { from: 3, to: 2, weight: 2 }, { from: 3, to: 3, weight: 8 },
-      ]"
-    />
-  </div>
-  <div class="eq-col">
-    <div class="eq-title"><MathText text="$G_h$" /></div>
-    <BipartiteGraph
-      :left-count="4"
-      :right-count="4"
-      :left-labels="['B_1','B_2','B_3','B_4']"
-      :left-labels-latex="true"
-      :right-labels="['G_1','G_2','G_3','G_4']"
-      :right-labels-latex="true"
-      :left-outer-labels="['5','7','6','8']"
-      :outer-labels-latex="true"
-      :width="230"
-      :height="170"
-      :node-radius="9"
-      :outer-label-offset="6"
-      :edges="[
-        { from: 0, to: 0, weight: 5, highlighted: true },
-        { from: 0, to: 1, weight: 5, highlighted: true },
-        { from: 1, to: 1, weight: 7, highlighted: true },
-        { from: 1, to: 2, weight: 7, highlighted: true },
-        { from: 2, to: 0, weight: 6, highlighted: true },
-        { from: 3, to: 3, weight: 8, highlighted: true },
-      ]"
-    />
-  </div>
-</div>
-
-Now the problem reduces to finding a **perfect matching** in an unweighted graph $G_h$ — scores no longer matter.
 
 ---
 
@@ -507,8 +663,8 @@ watch(step, s => applyStep(s))
   <BipartiteGraph
     ref="graphRef"
     :left-count="4" :right-count="4"
-    :left-labels="['B_1','B_2','B_3','B_4']" :left-labels-latex="true"
-    :right-labels="['G_1','G_2','G_3','G_4']" :right-labels-latex="true"
+    :left-labels="['b_1','b_2','b_3','b_4']" :left-labels-latex="true"
+    :right-labels="['g_1','g_2','g_3','g_4']" :right-labels-latex="true"
     :left-outer-labels="['5','7','6','8']" :outer-labels-latex="true"
     :width="300" :height="200" :node-radius="10" :outer-label-offset="6"
     :edges="baseEdges"
@@ -602,8 +758,8 @@ watch(pStep, s => { if (s >= 1) nextTick(() => applyPStep(s)) })
   <BipartiteGraph
     v-if="pStep === 0"
     :left-count="4" :right-count="4"
-    :left-labels="['B_1','B_2','B_3','B_4']" :left-labels-latex="true"
-    :right-labels="['G_1','G_2','G_3','G_4']" :right-labels-latex="true"
+    :left-labels="['b_1','b_2','b_3','b_4']" :left-labels-latex="true"
+    :right-labels="['g_1','g_2','g_3','g_4']" :right-labels-latex="true"
     :width="340" :height="220" :node-radius="11"
     :edges="[
       { from: 0, to: 0, weight: 5 }, { from: 0, to: 1, weight: 5 },
@@ -620,8 +776,8 @@ watch(pStep, s => { if (s >= 1) nextTick(() => applyPStep(s)) })
     v-if="pStep >= 1"
     ref="pGraph"
     :left-count="4" :right-count="4"
-    :left-labels="['B_1','B_2','B_3','B_4']" :left-labels-latex="true"
-    :right-labels="['G_1','G_2','G_3','G_4']" :right-labels-latex="true"
+    :left-labels="['b_1','b_2','b_3','b_4']" :left-labels-latex="true"
+    :right-labels="['g_1','g_2','g_3','g_4']" :right-labels-latex="true"
     :left-outer-labels="['5','7','6','8']" :outer-labels-latex="true"
     :width="340" :height="220" :node-radius="11" :outer-label-offset="6"
     :edges="pEdges"
@@ -671,8 +827,8 @@ During the search, we build an **alternating tree** — tracing all explored pat
 <div class="st-wrap">
   <BipartiteGraph
     :left-count="4" :right-count="4"
-    :left-labels="['B_1','B_2','B_3','B_4']" :left-labels-latex="true"
-    :right-labels="['G_1','G_2','G_3','G_4']" :right-labels-latex="true"
+    :left-labels="['b_1','b_2','b_3','b_4']" :left-labels-latex="true"
+    :right-labels="['g_1','g_2','g_3','g_4']" :right-labels-latex="true"
     :left-outer-labels="['5','7','6','8']" :outer-labels-latex="true"
     :width="220" :height="180" :node-radius="9" :outer-label-offset="5"
     :edges="[
@@ -905,8 +1061,8 @@ watch(dStep, s => { if (s >= 2) nextTick(() => applyDStep(s)) })
   <BipartiteGraph
     v-if="dStep <= 1"
     :left-count="4" :right-count="4"
-    :left-labels="['B_1','B_2','B_3','B_4']" :left-labels-latex="true"
-    :right-labels="['G_1','G_2','G_3','G_4']" :right-labels-latex="true"
+    :left-labels="['b_1','b_2','b_3','b_4']" :left-labels-latex="true"
+    :right-labels="['g_1','g_2','g_3','g_4']" :right-labels-latex="true"
     :left-outer-labels="['5','7','6','8']" :outer-labels-latex="true"
     :width="340" :height="220" :node-radius="11" :outer-label-offset="6"
     :edges="[
@@ -923,8 +1079,8 @@ watch(dStep, s => { if (s >= 2) nextTick(() => applyDStep(s)) })
     v-if="dStep >= 2"
     ref="dGraph"
     :left-count="4" :right-count="4"
-    :left-labels="['B_1','B_2','B_3','B_4']" :left-labels-latex="true"
-    :right-labels="['G_1','G_2','G_3','G_4']" :right-labels-latex="true"
+    :left-labels="['b_1','b_2','b_3','b_4']" :left-labels-latex="true"
+    :right-labels="['g_1','g_2','g_3','g_4']" :right-labels-latex="true"
       :left-outer-labels="['2','4','3','5']" :outer-labels-latex="true"
       :right-outer-labels="['3','3','0','3']"
     :width="340" :height="220" :node-radius="11" :outer-label-offset="6"
@@ -1226,9 +1382,9 @@ onMounted(() => regenerate())
     ref="tryGraph"
     :left-count="n"
     :right-count="n"
-    :left-labels="Array.from({length:n},(_,i)=>`B_${i+1}`)"
+    :left-labels="Array.from({length:n},(_,i)=>`b_${i+1}`)"
     :left-labels-latex="true"
-    :right-labels="Array.from({length:n},(_,i)=>`G_${i+1}`)"
+    :right-labels="Array.from({length:n},(_,i)=>`g_${i+1}`)"
     :right-labels-latex="true"
     :width="380" :height="Math.min(300, 80 + n * 22)" :node-radius="Math.max(4, 14 - n)" :outer-label-offset="6"
   />

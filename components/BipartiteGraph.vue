@@ -99,7 +99,7 @@ function initNodes() {
   for (let i = 0; i < props.leftCount; i++) {
     leftNodes.push({
       index: i,
-      label: props.leftLabels?.[i] ?? `B${i + 1}`,
+      label: props.leftLabels?.[i] ?? `b${i + 1}`,
       labelLatex: props.leftLabelsLatex,
       outerLabel: props.leftOuterLabels?.[i],
       outerLabelLatex: props.outerLabelsLatex,
@@ -110,7 +110,7 @@ function initNodes() {
   for (let i = 0; i < props.rightCount; i++) {
     rightNodes.push({
       index: i,
-      label: props.rightLabels?.[i] ?? `G${i + 1}`,
+      label: props.rightLabels?.[i] ?? `g${i + 1}`,
       labelLatex: props.rightLabelsLatex,
       outerLabel: props.rightOuterLabels?.[i],
       outerLabelLatex: props.outerLabelsLatex,
