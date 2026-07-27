@@ -196,7 +196,7 @@ const objectiveMath = String.raw`$w(M^*)=\max\,\{w(M)\}$`
 
 <div class="formulation-note"><span class="term"><MathText :text="girlsSetMath" /></span><span>: the set of girls</span></div>
 
-<div class="formulation-note"><span class="term"><MathText :text="edgeWeightMath" /></span><span>: the weight gained by matching <MathText :text="boyMath" /> with <MathText :text="girlMath" /></span></div>
+<div class="formulation-note"><span class="term"><MathText :text="edgeWeightMath" /></span><span>: the edge weight gained by matching <MathText :text="boyMath" /> with <MathText :text="girlMath" /></span></div>
 
 <div class="formulation-note"><span class="term"><MathText :text="matchingMath" /></span><span>: a Perfect Matching</span></div>
 
