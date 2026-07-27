@@ -223,34 +223,36 @@ layout: default
 
 <script setup>
 import { ref } from 'vue'
-const showMediatorFormula = ref(false)
-const showNextQuestion = ref(false)
+const showBridgeReveal = ref(false)
 const bridgeOptimalMath = String.raw`$M^*$`
 const definitionInequalityMath = String.raw`$w(M^*) \ge w(M)$`
-const mediatorInequalityMath = String.raw`$w(M^*) = \text{???} \ge w(M)$`
+const mediatorPrefixMath = String.raw`$w(M^*) =$`
+const mediatorPlaceholderMath = String.raw`$\text{???}$`
+const mediatorSuffixMath = String.raw`$\ge w(M)$`
 </script>
 
 # How to Verify Optimality?
 
 <div class="bridge-card-stack">
-  <div class="para bridge-large-card">
+  <div class="para bridge-large-card bridge-combined-card">
     <span class="para-num">01</span>
-    <div class="bridge-large-content bridge-formula-content">
-      <MathText :text="showMediatorFormula ? mediatorInequalityMath : definitionInequalityMath" />
+    <div class="bridge-combined-content">
+      <div class="bridge-large-content bridge-formula-content">
+        <div v-if="!showBridgeReveal"><MathText :text="definitionInequalityMath" /></div>
+        <div v-else class="bridge-mediator-formula">
+          <MathText :text="mediatorPrefixMath" />
+          <span class="term-star bridge-mediator-highlight"><MathText :text="mediatorPlaceholderMath" /></span>
+          <MathText :text="mediatorSuffixMath" />
+        </div>
+      </div>
+      <div class="bridge-combined-divider"></div>
+      <div class="bridge-large-content bridge-question-content">
+        <div v-if="!showBridgeReveal">How can we quickly verify <MathText :text="bridgeOptimalMath" />?</div>
+        <div v-else>Perhaps we can find an <span class="term-star">intermediate quantity</span>?</div>
+      </div>
     </div>
-    <button class="problem-toggle-btn" @click="showMediatorFormula = !showMediatorFormula">
-      {{ showMediatorFormula ? '←' : '→' }}
-    </button>
-  </div>
-
-  <div class="para bridge-large-card">
-    <span class="para-num">02</span>
-    <div class="bridge-large-content bridge-question-content">
-      <div v-if="!showNextQuestion">How can we quickly verify that our chosen <MathText :text="bridgeOptimalMath" /> satisfies this inequality?</div>
-      <div v-else>Perhaps we can find an <span class="term-star">intermediate quantity</span>?</div>
-    </div>
-    <button class="problem-toggle-btn" @click="showNextQuestion = !showNextQuestion">
-      {{ showNextQuestion ? '←' : '→' }}
+    <button class="problem-toggle-btn" @click="showBridgeReveal = !showBridgeReveal">
+      {{ showBridgeReveal ? '←' : '→' }}
     </button>
   </div>
 </div>
@@ -266,10 +268,11 @@ const boyLabelMath = String.raw`$h(b_i)$`
 const girlLabelMath = String.raw`$h(g_j)$`
 const boyVertexMath = String.raw`$b_i$`
 const girlVertexMath = String.raw`$g_j$`
-const upperBoundMath = String.raw`$\sum_{b_i\in B}h(b_i)+\sum_{g_j\in G}h(g_j)\ge w(M)$`
+const upperBoundLhsMath = String.raw`$\sum_{b_i\in B}h(b_i)+\sum_{g_j\in G}h(g_j)$`
+const upperBoundRhsMath = String.raw`$\ge w(M)$`
 </script>
 
-# Labels
+# Vertex Labels
 
 <div class="labels-stack">
   <div class="labels-theorem-card">
@@ -293,7 +296,7 @@ const upperBoundMath = String.raw`$\sum_{b_i\in B}h(b_i)+\sum_{g_j\in G}h(g_j)\g
           :height="118"
           :node-radius="13"
           :outer-label-offset="8"
-          :edges="[{ from: 0, to: 0, weight: 'w(b_i,g_j)', weightLatex: true, highlighted: true }]"
+          :edges="[{ from: 0, to: 0, weight: 'w(b_i,g_j)', weightLatex: true, highlighted: true, color: '#e4bea0' }]"
         />
       </div>
     </div>
@@ -307,7 +310,7 @@ const upperBoundMath = String.raw`$\sum_{b_i\in B}h(b_i)+\sum_{g_j\in G}h(g_j)\g
   <div class="labels-theorem-card labels-bound-card">
     <div class="labels-bound-copy">From this definition, we obtain:</div>
     <div class="labels-bound-row">
-      <div class="labels-formula"><MathText :text="upperBoundMath" /></div>
+      <div class="labels-formula labels-bound-formula"><span class="term-star labels-bound-highlight"><MathText :text="upperBoundLhsMath" /></span><MathText :text="upperBoundRhsMath" /></div>
       <button class="problem-toggle-btn labels-bulb-btn" @click="showLabelConclusion = !showLabelConclusion" aria-label="Reveal the intermediate quantity">
         {{ showLabelConclusion ? '−' : '💡' }}
       </button>
@@ -322,104 +325,90 @@ const upperBoundMath = String.raw`$\sum_{b_i\in B}h(b_i)+\sum_{g_j\in G}h(g_j)\g
 
 ---
 
-# Equality Graph
+<script setup>
+const equalityEdgeMath = String.raw`$h(b_i)+h(g_j)=w(b_i,g_j)$`
+const optimalLabelPrefixMath = String.raw`$w(M^*)=$`
+const optimalLabelSumMath = String.raw`$\sum_{b_i\in B}h(b_i)+\sum_{g_j\in G}h(g_j)$`
+const optimalityInequalityMath = String.raw`$w(M^*)\ge w(M)$`
+</script>
 
-The edges of a maximum-score perfect matching must always satisfy $h(b_i) + h(g_j) = w(b_i, g_j)$.
+# How to Find M*?
 
-What about the other edges that don't satisfy this?
-
-**Just forget them.** Transform $G$ into $G_h$ — the **equality graph** of $G$ — keeping only edges where the condition holds:
-
-$$
-G_h = (V, E_h), \qquad E_h = \{\, (b_i,g_j) \mid h(b_i) + h(g_j) = w(b_i,g_j) \,\}
-$$
-
-If a perfect matching $M^*$ exists in $G_h$, then $M^*$ is also the maximum-score perfect matching in the original $G$.
-
----
-
-# So Why?
-
-<div class="eq-side">
-  <div class="eq-col">
-    <div class="eq-title"><MathText text="$G$" /></div>
-    <BipartiteGraph
-      :left-count="4"
-      :right-count="4"
-      :left-labels="['b_1','b_2','b_3','b_4']"
-      :left-labels-latex="true"
-      :right-labels="['g_1','g_2','g_3','g_4']"
-      :right-labels-latex="true"
-      :width="240"
-      :height="150"
-      :node-radius="9"
-      :edges="[
-        { from: 0, to: 0, weight: 5 }, { from: 0, to: 1, weight: 3 },
-        { from: 0, to: 2, weight: 2 }, { from: 0, to: 3, weight: 1 },
-        { from: 1, to: 0, weight: 2 }, { from: 1, to: 1, weight: 4 },
-        { from: 1, to: 2, weight: 7 }, { from: 1, to: 3, weight: 3 },
-        { from: 2, to: 0, weight: 1 }, { from: 2, to: 1, weight: 6 },
-        { from: 2, to: 2, weight: 3 }, { from: 2, to: 3, weight: 4 },
-        { from: 3, to: 0, weight: 3 }, { from: 3, to: 1, weight: 2 },
-        { from: 3, to: 2, weight: 1 }, { from: 3, to: 3, weight: 8 },
-      ]"
-    />
+<div class="optimality-theorem-stack">
+  <div class="optimality-theorem-card">
+    <div class="optimality-theorem-copy">We only need to look for edges satisfying:</div>
+    <div class="optimality-theorem-formula"><MathText :text="equalityEdgeMath" /></div>
   </div>
-  <div class="eq-col">
-    <div class="eq-title"><MathText text="$G_h$" /></div>
-    <BipartiteGraph
-      :left-count="4"
-      :right-count="4"
-      :left-labels="['b_1','b_2','b_3','b_4']"
-      :left-labels-latex="true"
-      :right-labels="['g_1','g_2','g_3','g_4']"
-      :right-labels-latex="true"
-      :left-outer-labels="['5','7','6','8']"
-      :outer-labels-latex="true"
-      :width="240"
-      :height="150"
-      :node-radius="9"
-      :outer-label-offset="6"
-      :edges="[
-        { from: 0, to: 0, weight: 5, highlighted: true },
-        { from: 1, to: 2, weight: 7, highlighted: true },
-        { from: 2, to: 1, weight: 6, highlighted: true },
-        { from: 3, to: 3, weight: 8, highlighted: true },
-      ]"
-    />
+
+  <div class="optimality-theorem-card">
+    <div class="optimality-theorem-copy">If every edge selected by <MathText text="$M^*$" /> satisfies this condition, then:</div>
+    <div class="optimality-theorem-formula optimality-theorem-formula-wide"><MathText :text="optimalLabelPrefixMath" /><span class="term-star optimality-sum-highlight"><MathText :text="optimalLabelSumMath" /></span></div>
   </div>
-</div>
 
-<div class="eq-derivation">
-
-$$
-\begin{aligned}
-w(M) &= \sum_{(b_i,g_j)\in M} w(b_i,g_j) \\
-     &\le \sum_{(b_i,g_j)\in M} \bigl(h(b_i) + h(g_j)\bigr) \\
-     &= \sum_{i} h(b_i) + \sum_{j} h(g_j) \\
-     &= w(M^*)
-\end{aligned}
-$$
-
-$\sum h = 5+7+6+8 = 26$ is the upper bound. The matching in $G_h$ hits it — so it is optimal.
-
+  <div class="optimality-theorem-card optimality-theorem-card-final">
+    <div class="optimality-theorem-copy">Therefore:</div>
+    <div class="optimality-theorem-formula"><MathText :text="optimalityInequalityMath" /></div>
+  </div>
 </div>
 
 ---
 
-# Problem v0.0 & Solution
+<script setup>
+import { ref } from 'vue'
 
-> What if each boy's best-lover is unique (disjoint)?
+const showEqualitySubgraphDefinition = ref(false)
+const reformulationMatchingMath = String.raw`$M$`
+const reformulationOptimalMath = String.raw`$M^*$`
+const reformulationGraphNameMath = String.raw`$G_h$`
+const reformulationGraphMath = String.raw`$G_h=(V,E_h)$`
+const reformulationEqualityMath = String.raw`$h(b_i)+h(g_j)=w(b_i,g_j)$`
+const equalitySubgraphDefinitionMath = String.raw`$G_h=(V,E_h),\qquad E_h=\{(b_i,g_j)\in E\mid h(b_i)+h(g_j)=w(b_i,g_j)\}$`
+</script>
 
-If all boys' highest-score edges go to different girls, we can just pick them all — greedy works!
+# Problem Reformulation
+
+<div class="optimality-theorem-stack">
+  <div class="optimality-theorem-card">
+    <div class="optimality-theorem-copy">We now only need to <span class="term-star">construct labels</span> and find a matching <MathText :text="reformulationMatchingMath" /> whose selected edges all satisfy</div>
+    <div class="optimality-theorem-formula"><MathText :text="reformulationEqualityMath" /></div>
+    <div class="optimality-theorem-copy">Then this <MathText :text="reformulationMatchingMath" /> is exactly <MathText :text="reformulationOptimalMath" />.</div>
+  </div>
+
+  <div class="optimality-theorem-card reformulation-equality-card">
+    <div class="reformulation-equality-head">
+      <div class="optimality-theorem-copy">Thus, <MathText :text="reformulationOptimalMath" /> is a perfect matching in <MathText :text="reformulationGraphMath" />.</div>
+      <button
+        class="problem-toggle-btn"
+        type="button"
+        :aria-expanded="showEqualitySubgraphDefinition"
+        aria-label="Toggle equality subgraph definition"
+        @click="showEqualitySubgraphDefinition = !showEqualitySubgraphDefinition"
+      >{{ showEqualitySubgraphDefinition ? '−' : '+' }}</button>
+    </div>
+    <div v-if="showEqualitySubgraphDefinition" class="reformulation-equality-definition">
+      <div class="reformulation-definition-title">Equality subgraph</div>
+      <div class="reformulation-definition-formula"><MathText :text="equalitySubgraphDefinitionMath" /></div>
+    </div>
+  </div>
+
+  <div class="optimality-theorem-card optimality-theorem-card-final">
+    <div class="optimality-theorem-copy">The <span class="term-star">Hungarian Algorithm</span> constructs labels to <span class="term-star reformulation-goal-highlight">find a perfect matching <MathText :text="reformulationOptimalMath" /> in <MathText :text="reformulationGraphNameMath" /></span>.</div>
+  </div>
+</div>
+
+---
+
+# Algorithm v 0.0 
+
+> What if each $b_i$ can choose its highest-weight edge?
+
+If the highest-weight edge of each $b_i$ leads to a distinct $g_j$, pick all these edges — greedy works!
 
 <GreedyDemo />
 
-So $w(M^*) = \sum_{i=1}^{n} \max_{j} w(b_i,g_j)$ when the maxima are disjoint.
-
 ---
 
-# Shortcomings of Solution v0.0
+# Lack of Algorithm v 0.0
 
 In general, best choices **overlap** — two boys may share the same top girl.
 
@@ -447,11 +436,11 @@ We still aim high, but use **vertex labels** to systematically resolve conflicts
 
 ---
 
-# Solution v0.1
+# Algorithm v 0.1
 
 With labels and equality graph, we can now tackle the overlap problem.
 
-> A boy can have **multiple best-lovers** — all scoring the same max value $h(b_i)$. There always exists a solution where every boy finds one of his best-lovers.
+> For each $b_i\in B$, there may be several $g_j\in G$ satisfying $w(b_i,g_j)=h(b_i)$. We seek a perfect matching $M^*$ such that every $b_i$ is matched to one such $g_j$.
 
 <div class="eq-side">
   <div class="eq-col">
@@ -509,24 +498,18 @@ Now the problem reduces to finding a **perfect matching** in an unweighted graph
 
 ---
 
-# Labels
+<script setup>
+const defaultVertexLabelsMath = String.raw`$h(b_i)=\max_{g_j\in G}w(b_i,g_j)\qquad\qquad h(g_j)=0$`
+</script>
 
-Each vertex gets a **default** label (call it $h$ or $\ell$):
+# Default vertex labels
 
-$$
-h(b_i) = \max_{g_j \in G}\, w(b_i,g_j) \qquad\qquad h(g_j) = 0
-$$
+<div class="default-label-card">
+  <div class="default-label-copy">Each vertex gets a <span class="term-star">default label</span>:</div>
+  <div class="default-label-formula"><MathText :text="defaultVertexLabelsMath" /></div>
+</div>
 
-**Key insight** — from Solution v0.0, when every edge in $M$ satisfies $h(b_i)+h(g_j)=w(b_i,g_j)$, we have:
-
-$$
-w(M) = \sum_{(b_i,g_j)\in M} w(b_i,g_j) = \sum_{i} h(b_i) + \sum_{j} h(g_j)
-$$
-
-Since each $h(b_i)$ is $b_i$'s highest possible score, $\sum h$ is an **upper bound** that no perfect matching can surpass. So a perfect matching that satisfies the equation automatically hits the bound — and must be $M^*$
-
-
-<div class="graph-center-wrap" style="margin-top:0.4rem">
+<div class="graph-center-wrap" style="margin-top:0.65rem">
   <BipartiteGraph
     :left-count="3"
     :right-count="3"
@@ -537,10 +520,10 @@ Since each $h(b_i)$ is $b_i$'s highest possible score, $\sum h$ is an **upper bo
     :left-outer-labels="['5','7','6']"
     :right-outer-labels="['0','0','0']"
     :outer-labels-latex="true"
-    :width="280"
-    :height="180"
-    :node-radius="12"
-    :outer-label-offset="10"
+    :width="420"
+    :height="250"
+    :node-radius="14"
+    :outer-label-offset="12"
     :edges="[
       { from: 0, to: 0, weight: 3, dashed: true },
       { from: 0, to: 1, weight: 5, highlighted: true },
@@ -553,9 +536,6 @@ Since each $h(b_i)$ is $b_i$'s highest possible score, $\sum h$ is an **upper bo
       { from: 2, to: 2, weight: 5, dashed: true },
     ]"
   />
-  <div class="graph-caption">
-    <MathText text="$\Sigma h = 5+7+6 = 18$ — upper bound" />
-  </div>
 </div>
 
 ---
@@ -752,7 +732,7 @@ function applyPStep(s) {
 watch(pStep, s => { if (s >= 1) nextTick(() => applyPStep(s)) })
 </script>
 
-# Problem v0.5
+# Algorithm v0.5
 
 <div class="flex flex-col items-center">
   <BipartiteGraph
