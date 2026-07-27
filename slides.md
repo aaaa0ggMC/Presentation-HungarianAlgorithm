@@ -376,7 +376,7 @@ const equalitySubgraphDefinitionMath = String.raw`$G_h=(V,E_h),\qquad E_h=\{(b_i
 
   <div class="optimality-theorem-card reformulation-equality-card">
     <div class="reformulation-equality-head">
-      <div class="optimality-theorem-copy">Thus, <MathText :text="reformulationOptimalMath" /> is a perfect matching in <MathText :text="reformulationGraphMath" />.</div>
+      <div class="optimality-theorem-copy">Mathematically, <MathText :text="reformulationOptimalMath" /> is a perfect matching in <MathText :text="reformulationGraphMath" />.</div>
       <button
         class="problem-toggle-btn"
         type="button"
