@@ -436,6 +436,48 @@ We still aim high, but use **vertex labels** to systematically resolve conflicts
 
 ---
 
+<script setup>
+const defaultVertexLabelsMath = String.raw`$h(b_i)=\max_{g_j\in G}w(b_i,g_j)\qquad\qquad h(g_j)=0$`
+</script>
+
+# Default vertex labels
+
+<div class="default-label-card">
+  <div class="default-label-copy">Each vertex gets a <span class="term-star">default label</span>:</div>
+  <div class="default-label-formula"><MathText :text="defaultVertexLabelsMath" /></div>
+</div>
+
+<div class="graph-center-wrap" style="margin-top:0.65rem">
+  <BipartiteGraph
+    :left-count="3"
+    :right-count="3"
+    :left-labels="['b_1','b_2','b_3']"
+    :left-labels-latex="true"
+    :right-labels="['g_1','g_2','g_3']"
+    :right-labels-latex="true"
+    :left-outer-labels="['5','7','6']"
+    :right-outer-labels="['0','0','0']"
+    :outer-labels-latex="true"
+    :width="420"
+    :height="250"
+    :node-radius="14"
+    :outer-label-offset="12"
+    :edges="[
+      { from: 0, to: 0, weight: 3, dashed: true },
+      { from: 0, to: 1, weight: 5, highlighted: true },
+      { from: 0, to: 2, weight: 1, dashed: true },
+      { from: 1, to: 0, weight: 2, dashed: true },
+      { from: 1, to: 1, weight: 7, highlighted: true },
+      { from: 1, to: 2, weight: 4, dashed: true },
+      { from: 2, to: 0, weight: 6, highlighted: true },
+      { from: 2, to: 1, weight: 2, dashed: true },
+      { from: 2, to: 2, weight: 5, dashed: true },
+    ]"
+  />
+</div>
+
+---
+
 # Algorithm v 0.1
 
 With labels and equality graph, we can now tackle the overlap problem.
@@ -495,48 +537,6 @@ With labels and equality graph, we can now tackle the overlap problem.
 </div>
 
 Now the problem reduces to finding a **perfect matching** in an unweighted graph $G_h$ — scores no longer matter.
-
----
-
-<script setup>
-const defaultVertexLabelsMath = String.raw`$h(b_i)=\max_{g_j\in G}w(b_i,g_j)\qquad\qquad h(g_j)=0$`
-</script>
-
-# Default vertex labels
-
-<div class="default-label-card">
-  <div class="default-label-copy">Each vertex gets a <span class="term-star">default label</span>:</div>
-  <div class="default-label-formula"><MathText :text="defaultVertexLabelsMath" /></div>
-</div>
-
-<div class="graph-center-wrap" style="margin-top:0.65rem">
-  <BipartiteGraph
-    :left-count="3"
-    :right-count="3"
-    :left-labels="['b_1','b_2','b_3']"
-    :left-labels-latex="true"
-    :right-labels="['g_1','g_2','g_3']"
-    :right-labels-latex="true"
-    :left-outer-labels="['5','7','6']"
-    :right-outer-labels="['0','0','0']"
-    :outer-labels-latex="true"
-    :width="420"
-    :height="250"
-    :node-radius="14"
-    :outer-label-offset="12"
-    :edges="[
-      { from: 0, to: 0, weight: 3, dashed: true },
-      { from: 0, to: 1, weight: 5, highlighted: true },
-      { from: 0, to: 2, weight: 1, dashed: true },
-      { from: 1, to: 0, weight: 2, dashed: true },
-      { from: 1, to: 1, weight: 7, highlighted: true },
-      { from: 1, to: 2, weight: 4, dashed: true },
-      { from: 2, to: 0, weight: 6, highlighted: true },
-      { from: 2, to: 1, weight: 2, dashed: true },
-      { from: 2, to: 2, weight: 5, dashed: true },
-    ]"
-  />
-</div>
 
 ---
 
