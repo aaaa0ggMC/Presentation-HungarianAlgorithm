@@ -421,7 +421,7 @@ So $w(M^*) = \sum_{i=1}^{n} \max_{j} w(b_i,g_j)$ when the maxima are disjoint.
 
 # Shortcomings of Solution v0.0
 
-In general, best choices **overlap** — two boys may share the same top girl.
+In general, best choices **overlap**. 
 
 <div class="flex gap-8 items-start mt-6">
 <div class="flex-1">
@@ -1408,3 +1408,47 @@ onMounted(() => regenerate())
 
 
 
+---
+layout: image
+image: /appendix/page-1.png
+---
+
+---
+layout: image
+image: /appendix/page-2.png
+---
+
+---
+layout: image
+image: /appendix/page-3.png
+---
+
+---
+layout: image
+image: /appendix/page-4.png
+---
+
+---
+layout: image
+image: /appendix/page-5.png
+---
+
+---
+layout: image
+image: /appendix/page-6.png
+---
+
+---
+layout: image
+image: /appendix/page-7.png
+---
+
+---
+layout: image
+image: /appendix/page-8.png
+---
+
+---
+layout: image
+image: /appendix/page-9.png
+---
