@@ -553,8 +553,8 @@ We start with a simple greedy initialization:
 
 ```text
 M = ∅
-for each boy b in L
-  if b has an unmatched neighbor g in R
+for each boy b in B
+  if b has an unmatched neighbor g in G
     M = M ∪ {(b, g)}
 return M
 ```
@@ -854,10 +854,10 @@ During the search, we build an **alternating tree** — tracing all explored pat
     <br>
     <code>F = (V<sub>F</sub>, E<sub>F</sub>)</code> — rooted at the unmatched vertex, alternating unmatched/matched edges.
     <br><br>
-    <code>F<sub>L</sub> = V<sub>F</sub> ∩ L</code> •
-    <code>F<sub>R</sub> = V<sub>F</sub> ∩ R</code>
+    <code>F<sub>B</sub> = V<sub>F</sub> ∩ B</code> •
+    <code>F<sub>G</sub> = V<sub>F</sub> ∩ G</code>
     <br><br>
-    When no augmenting path exists, <code>F<sub>L</sub></code> and <code>F<sub>R</sub></code> tell us which labels to adjust.
+    When no augmenting path exists, <code>F<sub>B</sub></code> and <code>F<sub>G</sub></code> tell us which labels to adjust.
     <br><br>
     <span style="font-size:0.8rem;color:var(--c-text-dim)">Multiple unmatched vertices → a <strong>forest</strong> (one tree per root).</span>
   </div>
@@ -872,17 +872,17 @@ To add more edges into $G_h$ while keeping the bound, we adjust the labels:
 $$
 v.h =
 \begin{cases}
-v.h - \delta & \text{if } v \in F_L \\[4pt]
-v.h + \delta & \text{if } v \in F_R \\[4pt]
+v.h - \delta & \text{if } v \in F_B \\[4pt]
+v.h + \delta & \text{if } v \in F_G \\[4pt]
 v.h & \text{otherwise}
 \end{cases}
 $$
 
-- Boys in the tree ($F_L$) **lower** expectations — they've been aiming too high
-- Girls in the tree ($F_R$) **rise** in value — they become more attractive
+- Boys in the tree ($F_B$) **lower** expectations — they've been aiming too high
+- Girls in the tree ($F_G$) **rise** in value — they become more attractive
 - Vertices outside the tree stay untouched
 
-This keeps all matching edges valid (since $h(b)+h(g)$ is unchanged when both are in $F$), while new edges may enter $G_h$ from $F_L$ to girls outside $F_R$.
+This keeps all matching edges valid (since $h(b)+h(g)$ is unchanged when both are in $F$), while new edges may enter $G_h$ from $F_B$ to girls outside $F_G$.
 
 ---
 
@@ -893,14 +893,14 @@ What happens to each type of edge when we adjust by $\delta$?
 <div class="analysis-grid">
   <div class="analysis-card">
     <div class="analysis-case"><MathText text="$F\ \text{both}$" /></div>
-    <div class="analysis-detail"><MathText text="$b \in F_L$" />, <MathText text="$g \in F_R$" /></div>
+    <div class="analysis-detail"><MathText text="$b \in F_B$" />, <MathText text="$g \in F_G$" /></div>
     <div class="analysis-change"><MathText text="$h(b) \downarrow \delta$" />, <MathText text="$h(g) \uparrow \delta$" /></div>
     <div class="analysis-sum" style="color:var(--c-primary)"><MathText text="$h(b)+h(g)$" /> unchanged ✓</div>
     <div class="analysis-note">Matching edges stay satisfied</div>
   </div>
   <div class="analysis-card">
     <div class="analysis-case"><MathText text="$F\ \text{one}$" /></div>
-    <div class="analysis-detail"><MathText text="$b \in F_L$" />, <MathText text="$g \notin F_R$" /></div>
+    <div class="analysis-detail"><MathText text="$b \in F_B$" />, <MathText text="$g \notin F_G$" /></div>
     <div class="analysis-change"><MathText text="$h(b)+h(g)$" /> drops by <MathText text="$\delta$" /></div>
     <div class="analysis-sum" style="color:#b45309">New edges may enter <MathText text="$G_h$" />!</div>
     <div class="analysis-note">This is exactly what we want</div>
@@ -920,13 +920,16 @@ What happens to each type of edge when we adjust by $\delta$?
 
 Why adjust **all** vertices in the forest — not just some?
 
-Multiple edges could enter $G_h$ at once, and we don't know which one will lead to a perfect matching. Adjusting all of them keeps every option open.
+Every tree edge is **tight**: $h(b)+h(g)=w(b,g)$. If we adjust only *some* vertices, one endpoint of such an edge moves while the other doesn't — and the sum $h(b)+h(g)$ breaks:
 
-Since $\delta$ doesn't affect the total score of already-established connections (both endpoints in $F$ → $h(b)+h(g)$ unchanged), there's **no downside** to adjusting the whole forest.
+- $b \in F_B$ lowered, but his tree-girls not raised: $h(b)+h(g) < w(b,g)$ — labels become **infeasible**
+- $g \in F_G$ raised, but her tree-boys not lowered: $h(b)+h(g) > w(b,g)$ — the tight edge **falls out of $G_h$**, the tree breaks, and the new edge can never enter
+
+So adjusting one vertex forces its neighbors, which force theirs — the **whole forest must move together**. And since both-in-$F$ edges keep $h(b)+h(g)$ unchanged, moving everything breaks nothing.
 
 <div class="eq-derivation" style="margin-top:1rem;text-align:center">
 
-<MathText text="Lower the $F_L$ boys' expectations, raise the $F_R$ girls' worth — and let new possibilities emerge." />
+<MathText text="Lower the $F_B$ boys' expectations, raise the $F_G$ girls' worth — and let new possibilities emerge." />
 
 </div>
 
@@ -936,7 +939,7 @@ Since $\delta$ doesn't affect the total score of already-established connections
 
 Since $h(b_i)$ is the max weight from $b_i$, we have $h(b_i)+h(g_j)\ge w(b_i,g_j)$ for all edges — this is what makes $\sum h$ the upper bound. After adjusting labels, this **must still hold**.
 
-The only case where the sum drops is $b\in F_L,\ g\notin F_R$:
+The only case where the sum drops is $b\in F_B,\ g\notin F_G$:
 
 $$
 h_{\text{new}}(b)+h_{\text{new}}(g)=h(b)+h(g)-\delta
@@ -965,7 +968,7 @@ So $\delta$ is squeezed between two constraints:
 Only **one** value satisfies both:
 
 $$
-\boxed{\ \delta = \min_{b\in F_L,\ g\notin F_R} \bigl(h(b)+h(g)-w(b,g)\bigr)\ }
+\boxed{\ \delta = \min_{b\in F_B,\ g\notin F_G} \bigl(h(b)+h(g)-w(b,g)\bigr)\ }
 $$
 
 ---
@@ -1072,7 +1075,7 @@ watch(dStep, s => { if (s >= 2) nextTick(() => applyDStep(s)) })
       <MathText text="$G_h$: max matching size 3, $B_3$ isolated" />
     </span>
     <span v-if="dStep === 1">
-      <MathText text="$\delta = \min\{ h(b)+h(g)-w(b,g) \mid b\in F_L,\ g\notin F_R \} = \min(3,3,3,6) = 3$" />
+      <MathText text="$\delta = \min\{ h(b)+h(g)-w(b,g) \mid b\in F_B,\ g\notin F_G \} = \min(3,3,3,6) = 3$" />
     </span>
     <span v-if="dStep === 2">
       <MathText text="$\delta = 3$ applied! New labels: ${\bf [2,4,3,5]}$, ${\bf [3,3,0,3]}$ — 3 new edges enter $G_h$!" />
@@ -1162,9 +1165,9 @@ repeat
   if F reaches a free girl:
     augment M along the path
   else if F reaches no free girl:
-    δ = min{ h(b)+h(g)-w(b,g) | b∈F_L, g∉F_R }
-    for b in F_L:  h(b) -= δ
-    for g in F_R:  h(g) += δ
+    δ = min{ h(b)+h(g)-w(b,g) | b∈F_B, g∉F_G }
+    for b in F_B:  h(b) -= δ
+    for g in F_G:  h(g) += δ
     // new edges enter G_h → try again
 
 until M is a perfect matching
