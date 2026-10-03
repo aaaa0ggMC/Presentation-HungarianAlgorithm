@@ -1,0 +1,185 @@
+<Slide 1>
+
+So far, Wilson has told us when a matching is optimal. But how do we actually find it?
+
+There are too many factors to consider. Rome wasn't built in a day.
+
+So let's add some assumptions to simplify it:
+
+What if each boy can choose his highest-weight edge?
+
+Then we have a no-brainer solution -- just go through all the boys and pick their highest edges one by one. Our assumption guarantees this works.
+
+For example, in this graph: for B1 we pick B1-G3, then B2-G1, B3-G2, and B4-G4. Since every boy gets his highest edge, the total score cannot go any higher. This marks the upper bound of any matching.
+
+Our matching reaches the upper bound, so it is an optimal solution.
+
+In short: we first maximize the boys' expectations, and in Algorithm v0.0, it works.
+
+<Slide 2>
+
+Algorithm v0.0 is easy, but in general, best choices overlap.
+
+We can still pick a strategy to start with, and there are three options.
+
+The first one is starting from the top. The previous slides tell us that this marks the upper bound.
+
+The second one is starting from the bottom. But in Algorithm v0.0, starting from the top was natural and simple. Starting from the bottom is obviously inefficient.
+
+And the last one is medium-pick. Since we don't know where the optimum lies, we would have to explore two directions, and we still need the upper bound anyway -- that over-complicates the problem.
+
+So we keep the cherry-pick algorithm.
+
+We still aim high, but use vertex labels to systematically resolve conflicts.
+
+In Algorithm v0.0, we maximized the boys' expectations. When two boys want the same girl, we reduce some boys' expectations while raising the girls' importance, to make room for better matches.
+
+<Slide>
+
+First, we apply labels to every vertex.
+
+Each vertex gets a default label:
+
+the label of b_i equals the maximum weight among all edges connected to b_i;
+
+the label of g_j equals 0.
+
+<Slide>
+
+Now let's upgrade the problem a little:
+
+What if each boy has several best choices -- and a perfect matching exists among them?
+
+With the labels and the equality graph that Wilson introduced, we can now solve it easily.
+
+We extract the equality graph G_h just like this.
+
+Any perfect matching in G_h reaches the upper bound.
+
+For each boy, all his edges in G_h have the same, highest score. So if we can find M*, its weight must be 5 plus 7 plus 6 plus 8 -- and the scores can be temporarily ignored.
+
+Now the problem reduces to finding a perfect matching in an unweighted graph G_h.
+
+<Slide>
+
+And we can apply what we learned earlier.
+
+First we start with a simple greedy algorithm. It goes through all the boys and tries to connect each one to a girl.
+
+This may not give a perfect matching, but it's a solid foundation. We then use augmenting paths to flip edges and grow the matching until it's perfect.
+
+Now let's see a demo.
+
+In this demo, b1, b2 and b4 get paired by the greedy algorithm. But b3 is left out -- b3 is sad.
+
+We start from b3, moving along g1, b1, g2, b2, and finally g3. Since g3 is currently free, we have found an augmenting path.
+
+Now we flip the edges, and boom -- all the boys and girls are paired.
+
+<Slide>
+
+Problem solved again. Now let's make a summary.
+
+Via augmenting paths, we solved Algorithm v0.1, where G_h happens to contain a perfect matching on the first try.
+
+But real problems are messier -- often G_h lacks a perfect matching.
+
+We know that keeping labels as high as possible lets M* emerge from G_h. So what do we do when G_h has no perfect matching at all?
+
+<Slide>
+
+So we upgrade the problem again.
+
+In Algorithm v0.5, if we stick with the previous algorithm:
+
+Build G_h, start from b3.
+
+B3 has two paths to explore. The first path reaches b4, which has no other edge. Dead end.
+
+The second path also ends at b4.
+
+So we're stuck here -- it's impossible to cover all the vertices with the current G_h.
+
+But remember the edges we put aside? Without enough information, even a genius can make bad decisions, not to mention a fixed algorithm.
+
+So let's add more edges into G_h -- and maybe a path to a free girl will open up.
+
+<Slide>
+
+Last slide, we explored both paths from b3.
+
+Although both failed, along the way we built an alternating tree -- or an alternating forest when there are multiple unmatched boys.
+
+We define the forest like this.
+
+F_B marks the boys in the forest, and F_G marks the girls in the forest.
+
+Remember how we resolve conflicts: lower the boys' expectations and raise the girls' importance.
+
+So we adjust the labels like this:
+
+for boys in the search forest, subtract delta from the label;
+
+for girls in the search forest, add delta to the label;
+
+everyone else stays untouched.
+
+This keeps the established edges valid, and lets new edges enter G_h.
+
+<Slide>
+
+You may wonder how this works. So let's analyze the impact of the adjustment.
+
+Remember -- in the equality graph, a boy and a girl are connected exactly when their labels sum to the edge's score.
+
+For a boy and a girl both in F, h(b) decreases while h(g) increases by the same amount, so h(b)+h(g) is unchanged. Matching edges stay satisfied.
+
+For a boy in F and a girl not in F, h(b)+h(g) drops by delta. This lets new edges satisfy the equation -- exactly what we want.
+
+For boys and girls outside F, h(b)+h(g) is also unchanged. Irrelevant edges stay irrelevant.
+
+<Slide>
+
+But why must we adjust all the vertices in the forest, not just some?
+
+Every tree edge is tight -- the labels sum exactly to the score. If we adjust only some vertices, two things go wrong:
+
+A boy in the forest is lowered, but his tree-girls are not raised -- the sum drops below the score, and the labels become infeasible.
+
+A girl in the forest is raised, but her tree-boys are not lowered -- the sum rises above the score, the tight edge falls out of G_h, the tree breaks, and the new edge can never enter.
+
+So adjusting one vertex forces its neighbors, which forces theirs -- the whole forest must move together. And since edges with both ends in F keep their sum unchanged, moving everything breaks nothing.
+
+<Slide>
+
+Now, what is the best delta?
+
+(念ppt就行)
+
+So delta should follow this formula.
+
+<Slide>
+
+Now let's tackle the problem we failed at earlier.
+
+We find delta to be 3.
+
+We lower the forest boys' labels by 3, and raise the forest girls' labels by 3 -- and three new edges enter G_h: b1-g3, b2-g3 and b3-g3.
+
+Now b3 connects to g3 directly -- g3 is free, so we have found an augmenting path. And boom again -- a perfect matching!
+
+<Slide>
+
+But what if G_h still has no perfect matching? We just repeat the process. Since each iteration adds at least one new edge, the algorithm is guaranteed to terminate.
+
+<Slide>
+
+Now we have all the fragments.
+
+Let's put them all together, and BOOOM again -- we get the Hungarian Algorithm, and it is surprisingly compact.
+
+(读右边的台词)
+
+<Slide>
+
+Now let's try it out.
